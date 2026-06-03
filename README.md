@@ -1,3 +1,4 @@
+[index.html](https://github.com/user-attachments/files/28543552/index.html)
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -239,11 +240,7 @@
 </div>
 
 <div class="container">
-<<<<<<< HEAD
 <form id="applicationForm" action="https://formsubmit.co/whaokun555@gmail.com" method="POST">
-=======
-<form id="applicationForm">
->>>>>>> 771a949a1dde466268b1ac55c3e96286e7492c0e
 
   <!-- ═══ 模块1：基础信息 ═══ -->
   <div class="section">
@@ -594,19 +591,10 @@ function addWork() {
 }
 
 // ═══════════════════════════════════════════
-<<<<<<< HEAD
 // Form Submission → FormSubmit → whaokun555@gmail.com
 // ═══════════════════════════════════════════
 
 document.getElementById('applicationForm').addEventListener('submit', function(e) {
-=======
-// Form Submission
-// ═══════════════════════════════════════════
-
-document.getElementById('applicationForm').addEventListener('submit', function(e) {
-  e.preventDefault();
-
->>>>>>> 771a949a1dde466268b1ac55c3e96286e7492c0e
   // Basic validation
   const required = this.querySelectorAll('[required]');
   let valid = true;
@@ -622,10 +610,7 @@ document.getElementById('applicationForm').addEventListener('submit', function(e
   });
 
   if (!valid) {
-<<<<<<< HEAD
     e.preventDefault();
-=======
->>>>>>> 771a949a1dde466268b1ac55c3e96286e7492c0e
     showToast('请填写所有必填项（标 * 的字段）', 'error');
     window.scrollTo({ top: 0, behavior: 'smooth' });
     return;
@@ -634,59 +619,14 @@ document.getElementById('applicationForm').addEventListener('submit', function(e
   // Phone validation
   const phone = this.querySelector('[name="phone"]');
   if (!/^1[3-9]\d{9}$/.test(phone.value)) {
-<<<<<<< HEAD
     e.preventDefault();
-=======
->>>>>>> 771a949a1dde466268b1ac55c3e96286e7492c0e
     showToast('请输入正确的手机号', 'error');
     phone.focus();
     return;
   }
 
-<<<<<<< HEAD
   // 验证通过，提交到 FormSubmit → 邮件发送到你的邮箱
   showToast('正在提交...');
-=======
-  // Collect form data
-  const fd = new FormData(this);
-  const data = {};
-  fd.forEach((v, k) => {
-    if (data[k]) {
-      data[k] = Array.isArray(data[k]) ? [...data[k], v] : [data[k], v];
-    } else {
-      data[k] = v;
-    }
-  });
-
-  // ── TODO: 替换为你的接收地址 ──
-  // 方案1: FormSubmit.co（免费，替换下方 your@email.com 为你的邮箱）
-  // 方案2: 飞书 Webhook 地址
-  // 方案3: 自建后端接口
-  const SUBMIT_URL = ''; // 留空则用弹窗预览
-
-  if (SUBMIT_URL) {
-    // 实际提交
-    fetch(SUBMIT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    }).then(r => {
-      if (r.ok) showToast('✅ 提交成功！感谢您的填写');
-      else showToast('提交失败，请稍后重试', 'error');
-    }).catch(() => {
-      showToast('网络错误，请稍后重试', 'error');
-    });
-  } else {
-    // 演示模式：弹窗预览
-    console.log('表单数据:', JSON.stringify(data, null, 2));
-    const preview = Object.entries(data)
-      .filter(([k]) => !k.startsWith('_'))
-      .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`)
-      .join('\n');
-    alert('📋 表单数据预览（部署后替换为实际提交）\n\n' + preview);
-    showToast('✅ 表单验证通过！（演示模式）');
-  }
->>>>>>> 771a949a1dde466268b1ac55c3e96286e7492c0e
 });
 
 function showToast(msg, type) {
