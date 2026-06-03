@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>杭州黑白调科技有限公司 — 应聘登记表</title>
+<style>
+  :root { --primary:#2c3e6b; --accent:#4a6fa5; --bg:#f5f7fa; --card:#fff; --border:#e0e4ea; --text:#333; --text2:#777; --danger:#e74c3c; --radius:10px; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.6; min-height:100vh; }
+  .header { background:linear-gradient(135deg,var(--primary),var(--accent)); color:#fff; text-align:center; padding:28px 20px 24px; }
+  .header h1 { font-size:20px; font-weight:700; letter-spacing:1px; }
+  .header p { font-size:13px; opacity:0.85; margin-top:6px; }
+  .container { max-width:680px; margin:0 auto; padding:16px; }
+  .section { background:var(--card); border-radius:var(--radius); box-shadow:0 2px 12px rgba(0,0,0,0.06); margin-bottom:14px; overflow:hidden; }
+  .section-title { background:#f8f9fc; padding:14px 20px; font-size:15px; font-weight:700; color:var(--primary); border-bottom:1px solid var(--border); display:flex; align-items:center; gap:8px; }
+  .section-num { background:var(--accent); color:#fff; width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0; }
+  .section-body { padding:16px 20px; }
+  .form-row { margin-bottom:14px; }
+  .form-row:last-child { margin-bottom:0; }
+  .form-label { display:block; font-size:13px; font-weight:600; margin-bottom:4px; }
+  .required:after { content:" *"; color:var(--danger); font-weight:700; }
+  .optional:after { content:"（选填）"; color:var(--text2); font-weight:400; font-size:11px; margin-left:4px; }
+  input[type="text"],input[type="tel"],input[type="date"],input[type="number"],select,textarea { width:100%; padding:10px 14px; font-size:14px; border:1.5px solid var(--border); border-radius:8px; background:#fafbfc; color:var(--text); font-family:inherit; transition:border-color 0.2s,box-shadow 0.2s; outline:none; -webkit-appearance:none; }
+  input:focus,select:focus,textarea:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(74,111,165,0.1); background:#fff; }
+  textarea { resize:vertical; min-height:60px; }
+  .radio-group { display:flex; flex-wrap:wrap; gap:10px; }
+  .radio-item,.check-item { display:flex; align-items:center; gap:5px; font-size:13px; cursor:pointer; padding:8px 14px; border:1.5px solid var(--border); border-radius:8px; background:#fafbfc; transition:all 0.2s; }
+  .radio-item:has(input:checked),.check-item:has(input:checked) { border-color:var(--accent); background:#eef3fa; color:var(--primary); font-weight:600; }
+  .conditional { display:none; margin-top:8px; }
+  .conditional.show { display:block; }
+  .dynamic-group { border:1.5px dashed var(--border); border-radius:var(--radius); padding:14px; margin-bottom:10px; background:#fafbfc; position:relative; }
+  .dynamic-group .form-row { margin-bottom:10px; }
+  .dynamic-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:4px; padding:10px 20px; font-size:13px; font-weight:600; border:none; border-radius:8px; cursor:pointer; font-family:inherit; transition:all 0.2s; }
+  .btn-add { background:#eef3fa; color:var(--accent); }
+  .btn-add:hover { background:#dce6f2; }
+  .btn-remove { background:#fdeaea; color:var(--danger); font-size:12px; padding:6px 14px; position:absolute; top:8px; right:8px; }
+  .btn-remove:hover { background:#fad4d4; }
+  .btn-submit { width:100%; padding:14px; font-size:16px; background:linear-gradient(135deg,var(--primary),var(--accent)); color:#fff; border-radius:var(--radius); letter-spacing:1px; box-shadow:0 4px 16px rgba(44,62,107,0.25); }
+  .btn-submit:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(44,62,107,0.35); }
+  .declaration { background:#fef9f0; border:1px solid #f0d9a8; border-radius:8px; padding:14px 18px; font-size:13px; color:#8a6d3b; line-height:1.8; }
+  .toast { position:fixed; top:20px; left:50%; transform:translateX(-50%); background:#333; color:#fff; padding:12px 28px; border-radius:24px; font-size:14px; font-weight:600; z-index:9999; opacity:0; transition:opacity 0.3s; pointer-events:none; }
+  .toast.show { opacity:1; }
+  .toast.error { background:var(--danger); }
+  @media (max-width:480px) { .header h1 { font-size:17px; } .dynamic-grid { grid-template-columns:1fr; } .radio-group { flex-direction:column; } .container { padding:10px; } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>杭州黑白调科技有限公司</h1>
+  <p>应聘登记表 · 请认真如实填写</p>
+</div>
+
+<div class="container">
+<form id="applicationForm">
+
+  <!-- ═══ 模块1：基础信息 ═══ -->
+  <div class="section">
+    <div class="section-title"><span class="section-num">1</span> 基础信息</div>
+    <div class="section-body">
+      <div class="form-row"><label class="form-label required">您的姓名</label><input type="text" name="name" required placeholder="请输入姓名"></div>
+      <div class="form-row"><label class="form-label required">出生年月日</label><input type="date" name="birthday" required></div>
+      <div class="form-row"><label class="form-label optional">民族</label><input type="text" name="ethnicity" placeholder="如：汉族"></div>
+      <div class="form-row">
+        <label class="form-label optional">婚姻状况</label>
+        <div class="radio-group">
+          <label class="radio-item"><input type="radio" name="marital" value="未婚"> 未婚</label>
+          <label class="radio-item"><input type="radio" name="marital" value="已婚"> 已婚</label>
+          <label class="radio-item"><input type="radio" name="marital" value="离异"> 离异</label>
+          <label class="radio-item"><input type="radio" name="marital" value="丧偶"> 丧偶</label>
+        </div>
+      </div>
+      <div class="form-row"><label class="form-label required">现住址</label><input type="text" name="address" required placeholder="请填写详细地址"></div>
+      <div class="form-row"><label class="form-label required">联系电话</label><input type="tel" name="phone" required pattern="1[3-9]\d{9}" placeholder="请输入手机号"></div>
+      <div class="form-row">
+        <label class="form-label optional">户口性质</label>
+        <div class="radio-group">
+          <label class="radio-item"><input type="radio" name="household" value="农村"> 农村</label>
+          <label class="radio-item"><input type="radio" name="household" value="城镇"> 城镇</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 模块2：求职信息 ═══ -->
+  <div class="section">
+    <div class="section-title"><span class="section-num">2</span> 求职信息</div>
+    <div class="section-body">
+      <div class="form-row"><label class="form-label required">应聘岗位</label><input type="text" name="position" required placeholder="请输入应聘岗位"></div>
+      <div class="form-row">
+        <label class="form-label optional">招聘渠道</label>
+        <select name="channel"><option value="">请选择</option><option value="BOSS">BOSS直聘</option><option value="智联">智联招聘</option><option value="内推">内部推荐</option><option value="猎头">猎头</option><option value="其他">其他</option></select>
+      </div>
+      <div class="form-row"><label class="form-label required">目前薪资</label><input type="text" name="currentSalary" required placeholder="如：15K/月"></div>
+      <div class="form-row"><label class="form-label required">期望薪资</label><input type="text" name="expectedSalary" required placeholder="如：20K/月"></div>
+      <div class="form-row"><label class="form-label required">可入职时间</label><input type="date" name="availableDate" required></div>
+      <div class="form-row">
+        <label class="form-label optional">在职状态</label>
+        <div class="radio-group">
+          <label class="radio-item"><input type="radio" name="employmentStatus" value="已离职"> 已离职</label>
+          <label class="radio-item"><input type="radio" name="employmentStatus" value="在职未提"> 在职未提离职</label>
+          <label class="radio-item"><input type="radio" name="employmentStatus" value="在职已提"> 在职已提离职</label>
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label optional">岗位意向</label>
+        <div class="radio-group">
+          <label class="check-item"><input type="checkbox" name="positionPreference" value="专业岗"> 只考虑专业/专家岗</label>
+          <label class="check-item"><input type="checkbox" name="positionPreference" value="管理岗"> 只考虑管理岗</label>
+          <label class="check-item"><input type="checkbox" name="positionPreference" value="都考虑"> 都考虑</label>
+        </div>
+      </div>
+      <div class="form-row"><label class="form-label optional">岗位性质</label><input type="text" name="positionType" placeholder="如：全职、兼职、实习"></div>
+      <div class="form-row">
+        <label class="form-label optional">是否在本公司应聘过</label>
+        <div class="radio-group"><label class="radio-item"><input type="radio" name="appliedBefore" value="是"> 是</label><label class="radio-item"><input type="radio" name="appliedBefore" value="否"> 否</label></div>
+      </div>
+      <div class="form-row">
+        <label class="form-label optional">是否有熟人在司工作</label>
+        <div class="radio-group"><label class="radio-item"><input type="radio" name="hasAcquaintance" value="是"> 是</label><label class="radio-item"><input type="radio" name="hasAcquaintance" value="否"> 否</label></div>
+      </div>
+      <div class="form-row">
+        <label class="form-label optional">是否有重大手术 / 病史</label>
+        <div class="radio-group">
+          <label class="radio-item"><input type="radio" name="hasMedical" value="是" onclick="document.getElementById('medicalNote').classList.add('show')"> 是</label>
+          <label class="radio-item"><input type="radio" name="hasMedical" value="否" onclick="document.getElementById('medicalNote').classList.remove('show')"> 否</label>
+        </div>
+        <div class="conditional" id="medicalNote"><input type="text" name="medicalNote" placeholder="请补充说明"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 模块3：工作履历 ═══ -->
+  <div class="section">
+    <div class="section-title"><span class="section-num">3</span> 工作履历（近2份，按时间倒序）</div>
+    <div class="section-body">
+      <div id="workContainer"></div>
+      <button type="button" class="btn btn-add" onclick="addWork()">+ 添加工作经历</button>
+    </div>
+  </div>
+
+  <!-- ═══ 模块4：承诺说明 ═══ -->
+  <div class="section">
+    <div class="section-title"><span class="section-num">4</span> 承诺说明</div>
+    <div class="section-body">
+      <div class="declaration"><strong>本人承诺：</strong>以上所提供的资料及信息均真实准确无误，并接受杭州黑白调科技有限公司以任何形式对本人提供的资料及信息进行背景调查，若所提供的信息有误，本人愿承担由此产生的任何后果。</div>
+    </div>
+  </div>
+
+  <!-- ═══ 模块5：落款 ═══ -->
+  <div class="section">
+    <div class="section-title"><span class="section-num">5</span> 落款</div>
+    <div class="section-body">
+      <div class="form-row"><label class="form-label required">应聘人签字</label><input type="text" name="signature" required placeholder="请输入您的姓名作为签字确认"></div>
+      <div class="form-row"><label class="form-label required">填写日期</label><input type="date" name="fillDate" required></div>
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-submit">提 交 登 记 表</button>
+</form>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let workCount = 0;
+function addWork() {
+  workCount++;
+  document.getElementById('workContainer').insertAdjacentHTML('beforeend', `
+    <div class="dynamic-group" id="work${workCount}">
+      <button type="button" class="btn btn-remove" onclick="document.getElementById('work${workCount}').remove()">✕ 删除</button>
+      <div class="dynamic-grid">
+        <div class="form-row"><label class="form-label">单位名称</label><input type="text" name="workCompany_${workCount}"></div>
+        <div class="form-row"><label class="form-label">任职起止年月</label><input type="text" name="workPeriod_${workCount}" placeholder="如：2022.03 - 2025.01"></div>
+        <div class="form-row"><label class="form-label">职务</label><input type="text" name="workTitle_${workCount}"></div>
+        <div class="form-row"><label class="form-label">证明人及联系方式</label><input type="text" name="workReference_${workCount}"></div>
+        <div class="form-row"><label class="form-label">直属上级 + 联系方式</label><input type="text" name="workSupervisor_${workCount}"></div>
+        <div class="form-row"><label class="form-label">同级业务① + 联系方式</label><input type="text" name="workPeer1_${workCount}"></div>
+        <div class="form-row"><label class="form-label">同级业务② + 联系方式</label><input type="text" name="workPeer2_${workCount}"></div>
+      </div>
+    </div>`);
+}
+
+const FEISHU_URL = 'https://open.feishu.cn/open-apis/bot/v2/hook/e70726df-e73b-4e4b-a66a-6db1cc04683d';
+
+document.getElementById('applicationForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const required = this.querySelectorAll('[required]');
+  let valid = true;
+  required.forEach(el => {
+    if (!el.value.trim()) { valid = false; el.style.borderColor = 'var(--danger)'; el.addEventListener('input', function fix() { el.style.borderColor = 'var(--border)'; el.removeEventListener('input', fix); }); }
+  });
+  if (!valid) { showToast('请填写所有必填项（标 * 的字段）', 'error'); window.scrollTo({ top:0, behavior:'smooth' }); return; }
+  const phone = this.querySelector('[name="phone"]');
+  if (!/^1[3-9]\d{9}$/.test(phone.value)) { showToast('请输入正确的手机号', 'error'); phone.focus(); return; }
+
+  const fd = new FormData(this);
+  const data = {};
+  fd.forEach((v, k) => { if (data[k]) data[k] = [data[k], v].flat().join(', '); else data[k] = v; });
+
+  const label = {
+    name:'姓名', birthday:'出生年月日', ethnicity:'民族', marital:'婚姻状况', address:'现住址', phone:'联系电话', household:'户口性质',
+    position:'应聘岗位', channel:'招聘渠道', currentSalary:'目前薪资', expectedSalary:'期望薪资', availableDate:'可入职时间',
+    employmentStatus:'在职状态', positionPreference:'岗位意向', positionType:'岗位性质', appliedBefore:'是否应聘过', hasAcquaintance:'是否有熟人', hasMedical:'有无病史', medicalNote:'病史备注',
+    signature:'应聘人签字', fillDate:'填写日期'
+  };
+
+  let fields = '';
+  const seen = new Set(), dynDone = new Set();
+  for (const [k, v] of Object.entries(data)) {
+    if (!v || seen.has(k)) continue;
+    const match = k.match(/^workCompany_(\d+)$/);
+    if (match) {
+      const id = match[1], dk = 'work_' + id;
+      if (dynDone.has(dk)) continue; dynDone.add(dk);
+      fields += `\n**工作经历 #${id}**\n`;
+      ['workCompany_','workPeriod_','workTitle_','workReference_','workSupervisor_','workPeer1_','workPeer2_'].forEach((p, i) => {
+        const kk = p + id;
+        if (data[kk]) { fields += `${['单位','起止年月','职务','证明人','直属上级','同级1','同级2'][i]}：${data[kk]}\n`; seen.add(kk); }
+      });
+    } else {
+      const name = label[k] || k;
+      if (String(v).trim()) fields += `${name}：${v}\n`;
+      seen.add(k);
+    }
+  }
+
+  showToast('正在提交...');
+  fetch(FEISHU_URL, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({
+      msg_type:'interactive',
+      card: {
+        header:{ title:{ tag:'plain_text', content:'📋 新应聘登记表' }, template:'blue' },
+        elements: [
+          { tag:'div', text:{ tag:'lark_md', content:`**${data.name||'未填'}** | ${data.position||'未知岗位'} | ${data.phone||''}\n---\n${fields}` }},
+          { tag:'note', elements:[{ tag:'plain_text', content:'提交时间：'+new Date().toLocaleString('zh-CN') }]}
+        ]
+      }
+    })
+  }).then(r => r.json()).then(r => {
+    if (r.code === 0) showToast('✅ 提交成功！感谢您的填写');
+    else { showToast('提交失败，请稍后重试', 'error'); console.error(r); }
+  }).catch(err => { showToast('网络错误', 'error'); console.error(err); });
+});
+
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast show' + (type === 'error' ? ' error' : '');
+  clearTimeout(t._timer); t._timer = setTimeout(() => t.className = 'toast', 3000);
+}
+
+(function() {
+  const today = new Date().toISOString().split('T')[0];
+  document.querySelectorAll('input[type="date"]').forEach(el => { if (!el.value) el.value = today; });
+})();
+</script>
+</body>
+</html>
