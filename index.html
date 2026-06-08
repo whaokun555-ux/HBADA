@@ -264,13 +264,8 @@
       </div>
 
       <div class="form-row">
-        <label class="form-label optional">婚姻状况</label>
-        <div class="radio-group">
-          <label class="radio-item"><input type="radio" name="marital" value="未婚"> 未婚</label>
-          <label class="radio-item"><input type="radio" name="marital" value="已婚"> 已婚</label>
-          <label class="radio-item"><input type="radio" name="marital" value="离异"> 离异</label>
-          <label class="radio-item"><input type="radio" name="marital" value="丧偶"> 丧偶</label>
-        </div>
+        <label class="form-label required">婚姻状况</label>
+        <input type="text" name="marital" required placeholder="如：未婚、已婚、离异">
       </div>
 
       <div class="form-row">
@@ -304,23 +299,6 @@
       <div class="form-row">
         <label class="form-label required">应聘岗位</label>
         <input type="text" name="position" required placeholder="请输入应聘岗位">
-      </div>
-
-      <div class="form-row">
-        <label class="form-label optional">招聘渠道</label>
-        <select name="channel">
-          <option value="">请选择</option>
-          <option value="BOSS">BOSS直聘</option>
-          <option value="智联">智联招聘</option>
-          <option value="内推">内部推荐</option>
-          <option value="猎头">猎头</option>
-          <option value="其他">其他</option>
-        </select>
-      </div>
-
-      <div class="form-row">
-        <label class="form-label optional">面试时间</label>
-        <input type="datetime-local" name="interviewTime">
       </div>
 
       <div class="form-row">
