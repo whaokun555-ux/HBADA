@@ -324,25 +324,23 @@
       </div>
 
       <div class="form-row">
-        <label class="form-label required">目前薪资</label>
-        <div style="display:flex;gap:10px;align-items:center">
-          <div class="radio-group" style="flex-shrink:0">
-            <label class="radio-item"><input type="radio" name="currentSalaryType" value="月薪" checked> 月薪</label>
-            <label class="radio-item"><input type="radio" name="currentSalaryType" value="年薪"> 年薪</label>
-          </div>
-          <input type="text" name="currentSalary" required placeholder="如：15000（月薪）或 18万（年薪）" style="flex:1">
-        </div>
+        <label class="form-label required">目前月薪</label>
+        <input type="text" name="currentMonthlySalary" required placeholder="如：15000 或 15K">
       </div>
 
       <div class="form-row">
-        <label class="form-label required">期望薪资</label>
-        <div style="display:flex;gap:10px;align-items:center">
-          <div class="radio-group" style="flex-shrink:0">
-            <label class="radio-item"><input type="radio" name="expectedSalaryType" value="月薪" checked> 月薪</label>
-            <label class="radio-item"><input type="radio" name="expectedSalaryType" value="年薪"> 年薪</label>
-          </div>
-          <input type="text" name="expectedSalary" required placeholder="如：20000（月薪）或 25万（年薪）" style="flex:1">
-        </div>
+        <label class="form-label optional">目前年薪</label>
+        <input type="text" name="currentAnnualSalary" placeholder="如：18万 或 20万">
+      </div>
+
+      <div class="form-row">
+        <label class="form-label required">期望月薪</label>
+        <input type="text" name="expectedMonthlySalary" required placeholder="如：20000 或 20K">
+      </div>
+
+      <div class="form-row">
+        <label class="form-label optional">期望年薪</label>
+        <input type="text" name="expectedAnnualSalary" placeholder="如：25万 或 30万">
       </div>
 
       <div class="form-row">
@@ -531,8 +529,8 @@ function addEducation() {
       <button type="button" class="btn btn-remove" onclick="document.getElementById('education${educationCount}').remove()">✕ 删除</button>
       <div class="dynamic-grid">
         <div class="form-row">
-          <label class="form-label">学历</label>
-          <select name="eduDegree_${educationCount}">
+          <label class="form-label required">学历</label>
+          <select name="eduDegree_${educationCount}" required>
             <option value="">请选择</option>
             <option value="高中">高中</option>
             <option value="大专">大专</option>
@@ -542,20 +540,20 @@ function addEducation() {
           </select>
         </div>
         <div class="form-row">
-          <label class="form-label">学校名称</label>
-          <input type="text" name="eduSchool_${educationCount}">
+          <label class="form-label required">学校名称</label>
+          <input type="text" name="eduSchool_${educationCount}" required>
         </div>
         <div class="form-row">
-          <label class="form-label">专业</label>
-          <input type="text" name="eduMajor_${educationCount}">
+          <label class="form-label required">专业</label>
+          <input type="text" name="eduMajor_${educationCount}" required>
         </div>
         <div class="form-row">
-          <label class="form-label">就读起止年月</label>
-          <input type="text" name="eduPeriod_${educationCount}" placeholder="如：2020.09 - 2024.06">
+          <label class="form-label required">就读起止年月</label>
+          <input type="text" name="eduPeriod_${educationCount}" required placeholder="如：2020.09 - 2024.06">
         </div>
       </div>
       <div class="form-row" style="margin-top:8px;">
-        <label class="form-label">学位荣誉 / 奖励</label>
+        <label class="form-label optional">学位荣誉 / 奖励</label>
         <textarea name="eduHonors_${educationCount}" rows="2" placeholder="选填"></textarea>
       </div>
     </div>`;
@@ -633,16 +631,12 @@ document.getElementById('applicationForm').addEventListener('submit', function(e
 
   const label = {
     name:'姓名', birthday:'出生年月日', ethnicity:'民族', marital:'婚姻状况', address:'现住址', phone:'联系电话', household:'户口性质',
-    position:'应聘岗位', channel:'招聘渠道', interviewTime:'面试时间', currentSalary:'目前薪资', expectedSalary:'期望薪资', availableDate:'可入职时间',
+    position:'应聘岗位', channel:'招聘渠道', interviewTime:'面试时间', currentMonthlySalary:'目前月薪', currentAnnualSalary:'目前年薪', expectedMonthlySalary:'期望月薪', expectedAnnualSalary:'期望年薪', availableDate:'可入职时间',
     employmentStatus:'在职状态', positionPreference:'岗位偏好', positionType:'岗位性质', appliedBefore:'是否应聘过', hasAcquaintance:'是否有熟人', hasMedical:'有无病史', medicalNote:'病史备注',
     signature:'应聘人签字', fillDate:'填写日期'
   };
 
   const ld = { familyName_:['家庭成员',['姓名','关系','任职单位','职务']], eduDegree_:['教育经历',['学历','学校','专业','起止年月','荣誉']], workCompany_:['工作经历',['单位','入离职','职务','证明人','直属上级','同级1','同级2']] };
-
-  // 合并薪资类型
-  if (data.currentSalary && data.currentSalaryType) data.currentSalary += '（' + data.currentSalaryType + '）';
-  if (data.expectedSalary && data.expectedSalaryType) data.expectedSalary += '（' + data.expectedSalaryType + '）';
 
   let fields = '';
   const seen = new Set();
