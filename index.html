@@ -557,20 +557,12 @@ function addWork() {
           <input type="text" name="workTitle_${workCount}">
         </div>
         <div class="form-row">
-          <label class="form-label">工作证明人及联系方式</label>
-          <input type="text" name="workReference_${workCount}">
-        </div>
-        <div class="form-row">
           <label class="form-label">直属上级 + 联系方式</label>
           <input type="text" name="workSupervisor_${workCount}">
         </div>
         <div class="form-row">
-          <label class="form-label">同级业务① + 联系方式</label>
+          <label class="form-label">同级业务 + 联系方式</label>
           <input type="text" name="workPeer1_${workCount}">
-        </div>
-        <div class="form-row">
-          <label class="form-label">同级业务② + 联系方式</label>
-          <input type="text" name="workPeer2_${workCount}">
         </div>
       </div>
     </div>`;
@@ -614,7 +606,7 @@ document.getElementById('applicationForm').addEventListener('submit', function(e
     signature:'应聘人签字', fillDate:'填写日期'
   };
 
-  const ld = { familyName_:['家庭成员',['姓名','关系','任职单位','职务']], eduDegree_:['教育经历',['学历','学校','专业','起止年月','荣誉']], workCompany_:['工作经历',['单位','入离职','职务','证明人','直属上级','同级1','同级2']] };
+  const ld = { familyName_:['家庭成员',['姓名','关系','任职单位','职务']], eduDegree_:['教育经历',['学历','学校','专业','起止年月','荣誉']], workCompany_:['工作经历',['单位','入离职','职务','直属上级','同级业务']] };
 
   let fields = '';
   const seen = new Set();
@@ -632,7 +624,7 @@ document.getElementById('applicationForm').addEventListener('submit', function(e
         if (!prefix.startsWith(pkey)) continue;
         const prefs = pkey === 'familyName_' ? ['familyName_','familyRelation_','familyCompany_','familyTitle_']
                     : pkey === 'eduDegree_' ? ['eduDegree_','eduSchool_','eduMajor_','eduPeriod_','eduHonors_']
-                    : ['workCompany_','workPeriod_','workTitle_','workReference_','workSupervisor_','workPeer1_','workPeer2_'];
+                    : ['workCompany_','workPeriod_','workTitle_','workSupervisor_','workPeer1_'];
         fields += `\n**${title} #${id}**\n`;
         prefs.forEach((p, i) => { const kk = p + id; if (data[kk]) { fields += `${labs[i]}：${data[kk]}\n`; seen.add(kk); } });
       }
