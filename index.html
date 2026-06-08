@@ -324,13 +324,25 @@
       </div>
 
       <div class="form-row">
-        <label class="form-label required">目前月薪</label>
-        <input type="text" name="currentSalary" required placeholder="如：15000 或 15K">
+        <label class="form-label required">目前薪资</label>
+        <div style="display:flex;gap:10px;align-items:center">
+          <div class="radio-group" style="flex-shrink:0">
+            <label class="radio-item"><input type="radio" name="currentSalaryType" value="月薪" checked> 月薪</label>
+            <label class="radio-item"><input type="radio" name="currentSalaryType" value="年薪"> 年薪</label>
+          </div>
+          <input type="text" name="currentSalary" required placeholder="如：15000（月薪）或 18万（年薪）" style="flex:1">
+        </div>
       </div>
 
       <div class="form-row">
-        <label class="form-label required">期望月薪</label>
-        <input type="text" name="expectedSalary" required placeholder="如：20000 或 20K">
+        <label class="form-label required">期望薪资</label>
+        <div style="display:flex;gap:10px;align-items:center">
+          <div class="radio-group" style="flex-shrink:0">
+            <label class="radio-item"><input type="radio" name="expectedSalaryType" value="月薪" checked> 月薪</label>
+            <label class="radio-item"><input type="radio" name="expectedSalaryType" value="年薪"> 年薪</label>
+          </div>
+          <input type="text" name="expectedSalary" required placeholder="如：20000（月薪）或 25万（年薪）" style="flex:1">
+        </div>
       </div>
 
       <div class="form-row">
@@ -627,6 +639,10 @@ document.getElementById('applicationForm').addEventListener('submit', function(e
   };
 
   const ld = { familyName_:['家庭成员',['姓名','关系','任职单位','职务']], eduDegree_:['教育经历',['学历','学校','专业','起止年月','荣誉']], workCompany_:['工作经历',['单位','入离职','职务','证明人','直属上级','同级1','同级2']] };
+
+  // 合并薪资类型
+  if (data.currentSalary && data.currentSalaryType) data.currentSalary += '（' + data.currentSalaryType + '）';
+  if (data.expectedSalary && data.expectedSalaryType) data.expectedSalary += '（' + data.expectedSalaryType + '）';
 
   let fields = '';
   const seen = new Set();
