@@ -64,13 +64,8 @@
       <div class="form-row"><label class="form-label required">出生年月日</label><input type="date" name="birthday" required></div>
       <div class="form-row"><label class="form-label optional">民族</label><input type="text" name="ethnicity" placeholder="如：汉族"></div>
       <div class="form-row">
-        <label class="form-label optional">婚姻状况</label>
-        <div class="radio-group">
-          <label class="radio-item"><input type="radio" name="marital" value="未婚"> 未婚</label>
-          <label class="radio-item"><input type="radio" name="marital" value="已婚"> 已婚</label>
-          <label class="radio-item"><input type="radio" name="marital" value="离异"> 离异</label>
-          <label class="radio-item"><input type="radio" name="marital" value="丧偶"> 丧偶</label>
-        </div>
+        <label class="form-label required">婚姻状况</label>
+        <input type="text" name="marital" required placeholder="如：未婚、已婚、离异">
       </div>
       <div class="form-row"><label class="form-label required">现住址</label><input type="text" name="address" required placeholder="请填写详细地址"></div>
       <div class="form-row"><label class="form-label required">联系电话</label><input type="tel" name="phone" required pattern="1[3-9]\d{9}" placeholder="请输入手机号"></div>
@@ -89,12 +84,8 @@
     <div class="section-title"><span class="section-num">2</span> 求职信息</div>
     <div class="section-body">
       <div class="form-row"><label class="form-label required">应聘岗位</label><input type="text" name="position" required placeholder="请输入应聘岗位"></div>
-      <div class="form-row">
-        <label class="form-label optional">招聘渠道</label>
-        <select name="channel"><option value="">请选择</option><option value="BOSS">BOSS直聘</option><option value="智联">智联招聘</option><option value="内推">内部推荐</option><option value="猎头">猎头</option><option value="其他">其他</option></select>
-      </div>
-      <div class="form-row"><label class="form-label required">目前月薪</label><input type="text" name="currentSalary" required placeholder="如：15000 或 15K"></div>
-      <div class="form-row"><label class="form-label required">期望月薪</label><input type="text" name="expectedSalary" required placeholder="如：20000 或 20K"></div>
+      <div class="form-row"><label class="form-label required">目前薪资</label><input type="text" name="currentSalary" required placeholder="如：15K（月薪）或 18万（年包）"></div>
+      <div class="form-row"><label class="form-label required">期望薪资</label><input type="text" name="expectedSalary" required placeholder="如：20K（月薪）或 25万（年包）"></div>
       <div class="form-row"><label class="form-label required">可入职时间</label><input type="date" name="availableDate" required></div>
       <div class="form-row">
         <label class="form-label optional">在职状态</label>
@@ -175,10 +166,8 @@ function addWork() {
         <div class="form-row"><label class="form-label">单位名称</label><input type="text" name="workCompany_${workCount}"></div>
         <div class="form-row"><label class="form-label">任职起止年月</label><input type="text" name="workPeriod_${workCount}" placeholder="如：2022.03 - 2025.01"></div>
         <div class="form-row"><label class="form-label">职务</label><input type="text" name="workTitle_${workCount}"></div>
-        <div class="form-row"><label class="form-label">证明人及联系方式</label><input type="text" name="workReference_${workCount}"></div>
         <div class="form-row"><label class="form-label">直属上级 + 联系方式</label><input type="text" name="workSupervisor_${workCount}"></div>
-        <div class="form-row"><label class="form-label">同级业务① + 联系方式</label><input type="text" name="workPeer1_${workCount}"></div>
-        <div class="form-row"><label class="form-label">同级业务② + 联系方式</label><input type="text" name="workPeer2_${workCount}"></div>
+        <div class="form-row"><label class="form-label">同级业务 + 联系方式</label><input type="text" name="workPeer1_${workCount}"></div>
       </div>
     </div>`);
 }
@@ -202,7 +191,7 @@ document.getElementById('applicationForm').addEventListener('submit', function(e
 
   const label = {
     name:'姓名', birthday:'出生年月日', ethnicity:'民族', marital:'婚姻状况', address:'现住址', phone:'联系电话', household:'户口性质',
-    position:'应聘岗位', channel:'招聘渠道', currentSalary:'目前薪资', expectedSalary:'期望薪资', availableDate:'可入职时间',
+    position:'应聘岗位', currentSalary:'目前薪资', expectedSalary:'期望薪资', availableDate:'可入职时间',
     employmentStatus:'在职状态', positionPreference:'岗位意向', positionType:'岗位性质', appliedBefore:'是否应聘过', hasAcquaintance:'是否有熟人', hasMedical:'有无病史', medicalNote:'病史备注',
     signature:'应聘人签字', fillDate:'填写日期'
   };
@@ -216,9 +205,9 @@ document.getElementById('applicationForm').addEventListener('submit', function(e
       const id = match[1], dk = 'work_' + id;
       if (dynDone.has(dk)) continue; dynDone.add(dk);
       fields += `\n**工作经历 #${id}**\n`;
-      ['workCompany_','workPeriod_','workTitle_','workReference_','workSupervisor_','workPeer1_','workPeer2_'].forEach((p, i) => {
+      ['workCompany_','workPeriod_','workTitle_','workSupervisor_','workPeer1_'].forEach((p, i) => {
         const kk = p + id;
-        if (data[kk]) { fields += `${['单位','起止年月','职务','证明人','直属上级','同级1','同级2'][i]}：${data[kk]}\n`; seen.add(kk); }
+        if (data[kk]) { fields += `${['单位','起止年月','职务','直属上级','同级业务'][i]}：${data[kk]}\n`; seen.add(kk); }
       });
     } else {
       const name = label[k] || k;
