@@ -303,22 +303,16 @@
 
       <div class="form-row">
         <label class="form-label required">目前薪资</label>
-        <input type="text" name="currentMonthlySalary" required placeholder="如：15000 或 15K">
-      </div>
-
-      <div class="form-row">
-        <label class="form-label optional">目前年包</label>
-        <input type="text" name="currentAnnualSalary" placeholder="如：18万 或 20万">
+        <div style="display:flex;gap:10px;align-items:center">
+          <input type="text" name="currentSalary" required placeholder="如：15K（月薪）或 18万（年包）" style="flex:1">
+        </div>
       </div>
 
       <div class="form-row">
         <label class="form-label required">期望薪资</label>
-        <input type="text" name="expectedMonthlySalary" required placeholder="如：20000 或 20K">
-      </div>
-
-      <div class="form-row">
-        <label class="form-label optional">期望年包</label>
-        <input type="text" name="expectedAnnualSalary" placeholder="如：25万 或 30万">
+        <div style="display:flex;gap:10px;align-items:center">
+          <input type="text" name="expectedSalary" required placeholder="如：20K（月薪）或 25万（年包）" style="flex:1">
+        </div>
       </div>
 
       <div class="form-row">
@@ -601,7 +595,7 @@ document.getElementById('applicationForm').addEventListener('submit', function(e
 
   const label = {
     name:'姓名', birthday:'出生年月日', ethnicity:'民族', marital:'婚姻状况', address:'现住址', phone:'联系电话', household:'户口性质',
-    position:'应聘岗位', channel:'招聘渠道', interviewTime:'面试时间', currentMonthlySalary:'目前薪资', currentAnnualSalary:'目前年包', expectedMonthlySalary:'期望薪资', expectedAnnualSalary:'期望年包', availableDate:'可入职时间',
+    position:'应聘岗位', channel:'招聘渠道', interviewTime:'面试时间', currentSalary:'目前薪资', expectedSalary:'期望薪资', availableDate:'可入职时间',
     employmentStatus:'在职状态', positionPreference:'岗位偏好', positionType:'岗位性质', appliedBefore:'是否应聘过', hasAcquaintance:'是否有熟人', hasMedical:'有无病史', medicalNote:'病史备注',
     signature:'应聘人签字', fillDate:'填写日期'
   };
