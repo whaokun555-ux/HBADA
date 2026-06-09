@@ -329,7 +329,7 @@ function renderWater(){const td=today();D.water[td]=D.water[td]||0;let h='';for(
 function toggleWater(i){const td=today();D.water[td]=D.water[td]||0;if(D.water[td]===i+1)D.water[td]=i;else D.water[td]=i+1;saveData(D);renderWater();if(D.water[td]===8)toast('💧 今日饮水目标达成！')}
 
 // ═══════════ FOOD DB ═══════════
-const FOOD={};let selectedFood=null;
+let selectedFood=null;
 function searchFood(){const q=document.getElementById('foodSearch').value.trim().toLowerCase();const r=document.getElementById('foodSearchResults');if(!q){r.innerHTML='';selectedFood=null;return}r.innerHTML=Object.entries(FOOD).filter(([k])=>k.includes(q)).slice(0,8).map(([k,v])=>`<div style="padding:8px 10px;cursor:pointer;border-bottom:1px solid var(--border)" onclick="selectFood('${k}')"><b>${k}</b> <span style="color:var(--accent);float:right">${v[0]}kcal/100g</span></div>`).join('')}
 function selectFood(name){selectedFood=name;document.getElementById('foodSearch').value=name;document.getElementById('foodSearchResults').innerHTML='';document.getElementById('selectedFoodLabel').innerHTML=`✅ <b>${name}</b> · ${FOOD[name][0]}kcal/100g · 蛋白${FOOD[name][1]}g · 碳水${FOOD[name][2]}g · 脂肪${FOOD[name][3]}g`;calcMealKcal()}
 function calcMealKcal(){const g=parseFloat(document.getElementById('foodGrams').value)||0;if(!selectedFood||!g){document.getElementById('calcKcal').textContent='0';return}const d=FOOD[selectedFood],r=g/100;document.getElementById('calcKcal').textContent=Math.round(d[0]*r);document.getElementById('calcProtein').textContent=(d[1]*r).toFixed(1)+'g';document.getElementById('calcCarbs').textContent=(d[2]*r).toFixed(1)+'g';document.getElementById('calcFat').textContent=(d[3]*r).toFixed(1)+'g'}
@@ -368,7 +368,66 @@ const FOOD={
 function renderAll(){renderWorkout();renderWeek();renderDiet();renderBody();renderWater();updateStreak()}
 
 // ═══════════ EXERCISE GUIDE ═══════════
-const EX_G={};
+const EX_G={
+  '杠铃卧推':'仰卧平板凳，双手握杠铃，下放至胸部，推起至手臂伸直。主要训练胸大肌、三角肌前束、肱三头肌。',
+  '哑铃上斜卧推':'仰卧上斜凳（30-45°），双手持哑铃下放至胸两侧推起，重点训练上胸部。',
+  '器械飞鸟':'坐姿双臂展开，胸部发力向内夹紧，顶峰收缩。',
+  '双杠臂屈伸':'双手撑双杠，身体下降至肘90°推起，练下胸和三头。',
+  '龙门架夹胸':'站龙门架中间，双手从高位向下夹紧，练胸肌中缝。',
+  '哑铃飞鸟':'仰卧双手持哑铃向两侧展开，胸部发力向中间夹紧。',
+  '俯卧撑':'双手略宽于肩，身体呈直线，下降至胸触地后推起。',
+  '引体向上':'双手握杠悬挂，背部发力拉至下巴过杠，王牌练背动作。',
+  '杠铃划船':'俯身45°，双手握杠铃沿大腿方向拉至腹部，训练背阔肌。',
+  '高位下拉':'坐姿双手握横杆，背部发力下拉至锁骨位置。',
+  '坐姿划船':'坐姿双脚踩踏板，双手拉把手至腹部，背部夹紧。',
+  '直臂下压':'站姿双手握直杆，手臂伸直从上往下压至大腿前。',
+  '单臂哑铃划船':'单手撑凳，另一手持哑铃拉至腰部。',
+  '硬拉':'双脚与肩同宽握杠铃，背部挺直髋膝同时伸展拉起。王牌全身力量动作。',
+  '杠铃深蹲':'杠铃放斜方肌上，双脚略宽于肩，下蹲至大腿平行地面后站起。',
+  '腿举':'坐姿蹬踏板，屈膝至90°后蹬起。',
+  '罗马尼亚硬拉':'膝盖微屈，杠铃沿大腿下放至小腿中部，臀部发力拉起。',
+  '腿弯举':'俯卧腿弯举机，小腿后勾练大腿后侧。',
+  '提踵':'站姿踮脚尖，练小腿腓肠肌。',
+  '哑铃箭步蹲':'双手持哑铃前跨步下蹲至后膝近地面，前腿发力站起。',
+  '臀桥':'仰卧屈膝臀部发力抬起至身体呈直线，练臀大肌。',
+  '保加利亚分腿蹲':'后脚搭凳上前腿下蹲至90°后站起。',
+  '髋外展':'坐姿髋外展机双腿向外打开，练臀中肌。',
+  '杠铃推举':'坐姿杠铃从锁骨位置推至头顶上方，练三角肌。',
+  '哑铃侧平举':'双手持哑铃向身体两侧抬起至与肩平行。',
+  '面拉':'绳索从高位拉向面部，肘部向外，练三角肌后束和肩袖。',
+  '哑铃前平举':'双手持哑铃手臂伸直向前抬起至与肩同高。',
+  '阿诺德推举':'坐姿哑铃从胸前旋转推至头顶，全方位刺激肩部。',
+  '俯身飞鸟':'俯身45°双手持哑铃向两侧展开。',
+  '杠铃弯举':'站姿上臂固定，前臂弯举至胸前，练肱二头肌。',
+  '锤式弯举':'双手持哑铃掌心相对弯举至肩部。',
+  '绳索下压':'上臂固定，前臂下压至手臂伸直，练肱三头肌。',
+  '窄距卧推':'双手窄握杠铃下放至胸部推起，练三头肌和胸肌内侧。',
+  '集中弯举':'坐姿单臂肘顶大腿内侧弯举，孤立练二头肌。',
+  '仰卧臂屈伸':'仰卧双手持杠铃从额头上方推至手臂伸直。',
+  '平板支撑':'双肘撑地身体绷直成一直线，核心耐力基础动作。',
+  '卷腹':'仰卧屈膝下背贴地，腹部发力将肩膀卷离地面。',
+  '悬垂举腿':'双手握杠悬挂腹部发力抬腿至90°以上。',
+  '俄罗斯转体':'坐姿双腿抬起双手合十左右转体，练腹斜肌。',
+  '仰卧抬腿':'仰卧双腿伸直下腹发力抬起至垂直地面。',
+  'Dead Bug':'仰卧四肢朝天对侧手脚同时伸展，核心康复训练。',
+  'V字卷腹':'仰卧手脚同时抬起手指触脚尖呈V型。',
+  '跑步机慢跑':'配速6-8km/h匀速跑，保持能说话但不能唱歌的强度。',
+  '跑步机快走':'配速5-6km/h快走，可调坡度3-5°。',
+  '跑步机HIIT':'30秒冲刺+30秒慢走交替，高强度间歇。',
+  '动感单车匀速':'坐姿或站姿骑行跟随节奏，全身燃脂。',
+  '椭圆机匀速':'手脚协调运动对膝盖友好，调节阻力保持匀速。',
+  '划船机匀速':'模拟划船，腿部发力→核心传导→手臂拉动，全身85%肌肉参与。',
+  '波比跳':'站立→下蹲→平板→俯卧撑→跳起，全方位心肺训练。',
+  '开合跳':'双脚跳开同时双手头上击掌跳回，经典热身。',
+  '高抬腿':'原地快速抬高大腿至腰部高度。',
+  '深蹲跳':'深蹲到底后爆发跳起落地缓冲继续。',
+  '登山者':'平板支撑姿势交替提膝至胸前，核心+有氧。',
+  '跳绳匀速':'双脚并拢前脚掌着地手腕摇绳。',
+  '双摇跳绳':'跳一次摇两次绳，需要更高爆发力。',
+  '哑铃深蹲':'双手持哑铃在体侧，下蹲至大腿平行地面。更适合新手和女士。',
+  '哑铃卧推':'仰卧双手持哑铃推起，比杠铃更需要稳定性。',
+  '哑铃推举':'坐姿双手持哑铃从肩部推至头顶上方。',
+};
 function showExTip(name){const tip=EX_G[name];if(!tip)return toast('暂无说明');const el=document.createElement('div');el.style.cssText='position:fixed;inset:0;z-index:150;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.6)';el.innerHTML=`<div style="background:var(--card);border-radius:var(--radius);padding:20px;width:90%;max-width:360px"><b style="color:var(--accent)">💡 ${name}</b><p style="font-size:13px;line-height:1.8;margin:10px 0">${tip}</p><button class="btn btn-primary" onclick="this.closest('[style*=fixed]').remove()">知道了 👍</button></div>`;el.onclick=function(e){if(e.target===el)el.remove()};document.body.appendChild(el)}
 
 // ═══════════ INIT ═══════════
