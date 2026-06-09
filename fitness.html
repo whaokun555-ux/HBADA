@@ -98,7 +98,6 @@ input:focus,select:focus{border-color:var(--accent)}
 <header><div class="header-left"><h1>💪 健身助手</h1><span class="streak-badge" id="streakBadge">🔥 0天</span></div><button class="header-btn" onclick="showModal('settingsModal')">⚙</button></header>
 <main>
   <div class="quote" id="dailyQuote"></div>
-  <div style="display:flex;gap:8px;margin-bottom:12px"><button class="btn-small" id="modeGain" onclick="setMode('gain')" style="flex:1;padding:10px;font-size:13px">💪 增肌模式</button><button class="btn-small" id="modeCut" onclick="setMode('cut')" style="flex:1;padding:10px;font-size:13px">🔥 减脂模式</button></div>
   <!-- ═══ TRAINING TAB ═══ -->
   <div class="tab active" id="tab-workout">
     <div class="card" id="beginnerCard">
@@ -114,9 +113,10 @@ input:focus,select:focus{border-color:var(--accent)}
       <h3>🎯 今日训练 <span style="font-weight:400;font-size:11px;color:var(--text3);margin-left:auto" id="weeklySummary"></span></h3>
       <select id="quickTemplate" onchange="loadQuickTemplate()" style="margin-bottom:8px">
         <option value="">📋 选择训练模板...</option>
-        <optgroup label="🏋 男生·无氧力量"><option value="chest">胸部轰炸日</option><option value="back">背部雕刻日</option><option value="legs">腿部撕裂日</option><option value="shoulders">肩部炮弹日</option><option value="arms">手臂充血日</option><option value="core">核心锻造日</option></optgroup>
-        <optgroup label="🏃 有氧燃脂"><option value="treadmill">跑步机训练</option><option value="bike">动感单车</option><option value="elliptical">椭圆机</option><option value="rowing">划船机</option><option value="hiit">HIIT全身燃脂</option><option value="jump">跳绳训练</option></optgroup>
-        <optgroup label="🙋‍♀️ 女士专区"><option value="fLower">翘臀美腿</option><option value="fTone">全身塑形</option><option value="fCore">马甲线核心</option><option value="fCardio">燃脂有氧</option></optgroup>
+        <optgroup label="🙋‍♂️ 男生 · 增肌塑形"><option value="mGainChest">💪 胸部轰炸</option><option value="mGainBack">💪 背部雕刻</option><option value="mGainLegs">💪 腿部撕裂</option><option value="mGainShoulders">💪 肩部炮弹</option><option value="mGainArms">💪 手臂充血</option></optgroup>
+        <optgroup label="🙋‍♂️ 男生 · 减脂燃脂"><option value="mCutHIIT">🔥 HIIT全身燃脂</option><option value="mCutCardio">🔥 有氧耐力跑</option><option value="mCutCircuit">🔥 循环力量训练</option><option value="mCutJump">🔥 跳绳燃脂</option></optgroup>
+        <optgroup label="🙋‍♀️ 女士 · 增肌塑形"><option value="fGainLower">💪 翘臀美腿</option><option value="fGainTone">💪 全身塑形</option><option value="fGainBack">💪 美背线条</option></optgroup>
+        <optgroup label="🙋‍♀️ 女士 · 减脂燃脂"><option value="fCutCore">🔥 马甲线核心</option><option value="fCutCardio">🔥 燃脂有氧</option><option value="fCutYoga">🔥 瑜伽拉伸燃脂</option></optgroup>
       </select>
       <div id="exerciseList"><p style="text-align:center;color:var(--text3);padding:24px">👆 选择训练模板开始今天训练</p></div>
       <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
@@ -239,24 +239,29 @@ function updateStreak(){
 function loadQuickTemplate(){
   const v=document.getElementById('quickTemplate').value;if(!v)return;
   const T={
-    chest:[{name:'杠铃卧推',sets:4,reps:'8-10次',weight:''},{name:'哑铃上斜卧推',sets:3,reps:'10-12次',weight:''},{name:'器械飞鸟',sets:3,reps:'12-15次',weight:''},{name:'双杠臂屈伸',sets:3,reps:'力竭',weight:''},{name:'龙门架夹胸',sets:3,reps:'12-15次',weight:''},{name:'哑铃飞鸟',sets:3,reps:'12-15次',weight:''},{name:'俯卧撑',sets:3,reps:'力竭',weight:''}],
-    back:[{name:'引体向上',sets:4,reps:'8-10次',weight:''},{name:'杠铃划船',sets:4,reps:'8-10次',weight:''},{name:'高位下拉',sets:3,reps:'10-12次',weight:''},{name:'坐姿划船',sets:3,reps:'10-12次',weight:''},{name:'直臂下压',sets:3,reps:'12-15次',weight:''},{name:'单臂哑铃划船',sets:3,reps:'10-12次',weight:''},{name:'硬拉',sets:3,reps:'6-8次',weight:''}],
-    legs:[{name:'杠铃深蹲',sets:4,reps:'8-10次',weight:''},{name:'腿举',sets:3,reps:'10-12次',weight:''},{name:'罗马尼亚硬拉',sets:3,reps:'10-12次',weight:''},{name:'腿弯举',sets:3,reps:'12-15次',weight:''},{name:'提踵',sets:4,reps:'15-20次',weight:''},{name:'哑铃箭步蹲',sets:3,reps:'10-12次',weight:''},{name:'臀桥',sets:3,reps:'15次',weight:''}],
-    shoulders:[{name:'杠铃推举',sets:4,reps:'8-10次',weight:''},{name:'哑铃侧平举',sets:3,reps:'12-15次',weight:''},{name:'面拉',sets:3,reps:'12-15次',weight:''},{name:'哑铃前平举',sets:3,reps:'12-15次',weight:''},{name:'阿诺德推举',sets:3,reps:'10-12次',weight:''},{name:'俯身飞鸟',sets:3,reps:'12-15次',weight:''}],
-    arms:[{name:'杠铃弯举',sets:3,reps:'10-12次',weight:''},{name:'锤式弯举',sets:3,reps:'10-12次',weight:''},{name:'绳索下压',sets:3,reps:'12-15次',weight:''},{name:'窄距卧推',sets:3,reps:'8-10次',weight:''},{name:'集中弯举',sets:3,reps:'10-12次',weight:''},{name:'仰卧臂屈伸',sets:3,reps:'10-12次',weight:''}],
-    core:[{name:'平板支撑',sets:3,reps:'45秒',weight:''},{name:'卷腹',sets:3,reps:'15-20次',weight:''},{name:'悬垂举腿',sets:3,reps:'10-12次',weight:''},{name:'俄罗斯转体',sets:3,reps:'20次',weight:''},{name:'仰卧抬腿',sets:3,reps:'15次',weight:''},{name:'V字卷腹',sets:3,reps:'12-15次',weight:''}],
-    treadmill:[{name:'跑步机慢跑',sets:1,reps:'20-30分钟',weight:''},{name:'跑步机快走',sets:1,reps:'30-40分钟',weight:''},{name:'跑步机HIIT',sets:1,reps:'15-20分钟',weight:''}],
-    bike:[{name:'动感单车匀速',sets:1,reps:'20-30分钟',weight:''},{name:'单车间歇冲刺',sets:1,reps:'15分钟',weight:''}],
-    elliptical:[{name:'椭圆机匀速',sets:1,reps:'20-30分钟',weight:''},{name:'椭圆机间歇',sets:1,reps:'15-20分钟',weight:''}],
-    rowing:[{name:'划船机匀速',sets:1,reps:'15-20分钟',weight:''},{name:'划船机HIIT',sets:1,reps:'10-15分钟',weight:''}],
-    hiit:[{name:'波比跳',sets:3,reps:'45秒',weight:''},{name:'开合跳',sets:3,reps:'45秒',weight:''},{name:'高抬腿',sets:3,reps:'30秒',weight:''},{name:'深蹲跳',sets:3,reps:'12-15次',weight:''},{name:'登山者',sets:3,reps:'45秒',weight:''}],
-    jump:[{name:'跳绳匀速',sets:3,reps:'3分钟',weight:''},{name:'双摇跳绳',sets:3,reps:'1分钟',weight:''}],
-    fLower:[{name:'哑铃深蹲',sets:4,reps:'12-15次',weight:''},{name:'臀桥',sets:4,reps:'15次',weight:''},{name:'哑铃箭步蹲',sets:3,reps:'10-12次/侧',weight:''},{name:'髋外展',sets:3,reps:'15-20次',weight:''},{name:'腿弯举',sets:3,reps:'12-15次',weight:''},{name:'保加利亚分腿蹲',sets:3,reps:'10-12次/侧',weight:''},{name:'罗马尼亚硬拉',sets:3,reps:'12次',weight:''}],
-    fTone:[{name:'哑铃卧推',sets:3,reps:'12-15次',weight:''},{name:'高位下拉',sets:3,reps:'12-15次',weight:''},{name:'哑铃推举',sets:3,reps:'12-15次',weight:''},{name:'坐姿划船',sets:3,reps:'12-15次',weight:''},{name:'哑铃深蹲',sets:3,reps:'12-15次',weight:''},{name:'哑铃侧平举',sets:3,reps:'15次',weight:''},{name:'平板支撑',sets:3,reps:'30-45秒',weight:''}],
-    fCore:[{name:'平板支撑',sets:4,reps:'30-45秒',weight:''},{name:'卷腹',sets:3,reps:'15-20次',weight:''},{name:'仰卧抬腿',sets:3,reps:'15次',weight:''},{name:'俄罗斯转体',sets:3,reps:'20次',weight:''},{name:'Dead Bug',sets:3,reps:'10次/侧',weight:''},{name:'V字卷腹',sets:3,reps:'12次',weight:''}],
-    fCardio:[{name:'跑步机快走',sets:1,reps:'30-40分钟',weight:''},{name:'椭圆机匀速',sets:1,reps:'25-30分钟',weight:''},{name:'跳绳',sets:3,reps:'2分钟',weight:''},{name:'开合跳',sets:3,reps:'45秒',weight:''},{name:'高抬腿',sets:3,reps:'30秒',weight:''}],
+    // 男生·增肌（大重量少次数）
+    mGainChest:[{name:'杠铃卧推',sets:4,reps:'6-8次',weight:''},{name:'哑铃上斜卧推',sets:4,reps:'8-10次',weight:''},{name:'器械飞鸟',sets:3,reps:'10-12次',weight:''},{name:'双杠臂屈伸',sets:3,reps:'力竭',weight:''},{name:'龙门架夹胸',sets:3,reps:'10-12次',weight:''},{name:'哑铃飞鸟',sets:3,reps:'10-12次',weight:''},{name:'窄距俯卧撑',sets:3,reps:'力竭',weight:''}],
+    mGainBack:[{name:'引体向上',sets:4,reps:'6-8次',weight:''},{name:'杠铃划船',sets:4,reps:'8-10次',weight:''},{name:'高位下拉',sets:3,reps:'8-10次',weight:''},{name:'坐姿划船',sets:3,reps:'8-10次',weight:''},{name:'硬拉',sets:4,reps:'5-8次',weight:''},{name:'单臂哑铃划船',sets:3,reps:'8-10次',weight:''},{name:'直臂下压',sets:3,reps:'10-12次',weight:''}],
+    mGainLegs:[{name:'杠铃深蹲',sets:5,reps:'6-8次',weight:''},{name:'腿举',sets:4,reps:'8-10次',weight:''},{name:'罗马尼亚硬拉',sets:4,reps:'8-10次',weight:''},{name:'腿弯举',sets:3,reps:'10-12次',weight:''},{name:'提踵',sets:4,reps:'12-15次',weight:''},{name:'哑铃箭步蹲',sets:3,reps:'10次/侧',weight:''}],
+    mGainShoulders:[{name:'杠铃推举',sets:4,reps:'6-8次',weight:''},{name:'哑铃侧平举',sets:4,reps:'10-12次',weight:''},{name:'面拉',sets:3,reps:'12-15次',weight:''},{name:'哑铃前平举',sets:3,reps:'10-12次',weight:''},{name:'阿诺德推举',sets:3,reps:'8-10次',weight:''},{name:'俯身飞鸟',sets:3,reps:'10-12次',weight:''}],
+    mGainArms:[{name:'杠铃弯举',sets:4,reps:'8-10次',weight:''},{name:'锤式弯举',sets:3,reps:'8-10次',weight:''},{name:'绳索下压',sets:4,reps:'10-12次',weight:''},{name:'窄距卧推',sets:3,reps:'8-10次',weight:''},{name:'集中弯举',sets:3,reps:'10-12次',weight:''},{name:'仰卧臂屈伸',sets:3,reps:'8-10次',weight:''}],
+    // 男生·减脂（中等重量多次数+有氧）
+    mCutHIIT:[{name:'波比跳',sets:4,reps:'45秒',weight:''},{name:'开合跳',sets:4,reps:'45秒',weight:''},{name:'高抬腿',sets:4,reps:'30秒',weight:''},{name:'深蹲跳',sets:3,reps:'15次',weight:''},{name:'登山者',sets:4,reps:'45秒',weight:''},{name:'战绳',sets:3,reps:'30秒',weight:''},{name:'平板支撑',sets:3,reps:'60秒',weight:''}],
+    mCutCardio:[{name:'跑步机慢跑',sets:1,reps:'30-40分钟',weight:''},{name:'跑步机间歇跑',sets:1,reps:'20分钟(1分快+1分慢)',weight:''},{name:'椭圆机',sets:1,reps:'25-30分钟',weight:''},{name:'划船机',sets:1,reps:'15-20分钟',weight:''}],
+    mCutCircuit:[{name:'哑铃深蹲+推举组合',sets:3,reps:'12-15次',weight:''},{name:'引体向上+悬垂举腿',sets:3,reps:'力竭',weight:''},{name:'哑铃划船+弯举',sets:3,reps:'12-15次',weight:''},{name:'俯卧撑+登山者',sets:3,reps:'力竭+30秒',weight:''},{name:'箭步蹲+侧平举',sets:3,reps:'12次/侧',weight:''},{name:'波比跳+开合跳',sets:3,reps:'10次+30秒',weight:''}],
+    mCutJump:[{name:'跳绳匀速',sets:4,reps:'3分钟',weight:''},{name:'双摇跳绳',sets:3,reps:'1分钟',weight:''},{name:'单脚跳绳',sets:2,reps:'1分钟/侧',weight:''},{name:'高抬腿跳绳',sets:3,reps:'1分钟',weight:''}],
+    // 女士·增肌塑形（小重量多组数）
+    fGainLower:[{name:'哑铃深蹲',sets:4,reps:'12-15次',weight:''},{name:'臀桥',sets:4,reps:'15次',weight:''},{name:'保加利亚分腿蹲',sets:3,reps:'12次/侧',weight:''},{name:'髋外展',sets:4,reps:'15-20次',weight:''},{name:'罗马尼亚硬拉',sets:3,reps:'12次',weight:''},{name:'腿弯举',sets:3,reps:'12-15次',weight:''},{name:'哑铃箭步蹲',sets:3,reps:'12次/侧',weight:''}],
+    fGainTone:[{name:'哑铃卧推',sets:3,reps:'12-15次',weight:''},{name:'高位下拉',sets:3,reps:'12-15次',weight:''},{name:'哑铃推举',sets:3,reps:'12-15次',weight:''},{name:'坐姿划船',sets:3,reps:'12-15次',weight:''},{name:'哑铃深蹲',sets:3,reps:'15次',weight:''},{name:'哑铃侧平举',sets:4,reps:'15次',weight:''},{name:'绳索下压',sets:3,reps:'12-15次',weight:''},{name:'平板支撑',sets:3,reps:'45秒',weight:''}],
+    fGainBack:[{name:'弹力带引体向上',sets:4,reps:'力竭',weight:''},{name:'高位下拉',sets:3,reps:'12-15次',weight:''},{name:'坐姿划船',sets:3,reps:'12-15次',weight:''},{name:'直臂下压',sets:3,reps:'15次',weight:''},{name:'面拉',sets:3,reps:'15次',weight:''},{name:'单臂哑铃划船',sets:3,reps:'12次/侧',weight:''}],
+    // 女士·减脂
+    fCutCore:[{name:'平板支撑',sets:4,reps:'45-60秒',weight:''},{name:'卷腹',sets:4,reps:'20次',weight:''},{name:'仰卧抬腿',sets:3,reps:'15次',weight:''},{name:'俄罗斯转体',sets:4,reps:'20次',weight:''},{name:'Dead Bug',sets:3,reps:'12次/侧',weight:''},{name:'V字卷腹',sets:3,reps:'15次',weight:''},{name:'鸟狗式',sets:3,reps:'12次/侧',weight:''}],
+    fCutCardio:[{name:'跑步机快走',sets:1,reps:'35-40分钟',weight:''},{name:'椭圆机匀速',sets:1,reps:'30分钟',weight:''},{name:'跳绳',sets:4,reps:'2分钟',weight:''},{name:'开合跳',sets:4,reps:'45秒',weight:''},{name:'高抬腿',sets:3,reps:'30秒',weight:''},{name:'动感单车',sets:1,reps:'20-25分钟',weight:''}],
+    fCutYoga:[{name:'下犬式→上犬式流动',sets:3,reps:'10次',weight:''},{name:'战士二式（左右）',sets:2,reps:'60秒/侧',weight:''},{name:'猫牛式',sets:3,reps:'10次',weight:''},{name:'桥式',sets:3,reps:'45秒',weight:''},{name:'婴儿式放松',sets:1,reps:'2分钟',weight:''},{name:'平板支撑',sets:3,reps:'45秒',weight:''}],
   };
-  D.exercises[today()]=(T[v]||[]).map(e=>({...e,done:false}));saveData(D);renderWorkout();renderWeek();updateStreak();
+  const exs=(T[v]||[]).map(e=>({...e,done:false}));if(!exs.length)return;
+  D.mode=v.includes('Cut')?'cut':'gain';saveData(D);updateModeUI();
+  D.exercises[today()]=exs;saveData(D);renderWorkout();renderWeek();updateStreak();
   toast('✅ '+document.getElementById('quickTemplate').selectedOptions[0].text);
 }
 
