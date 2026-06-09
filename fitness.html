@@ -184,6 +184,15 @@ input:focus,select:focus{border-color:var(--accent)}
   <div class="modal-btns"><button class="btn btn-small" onclick="hideModal('addExModal')">取消</button><button class="btn btn-primary" onclick="addExercise()">添加</button></div>
 </div></div>
 
+<div class="modal" id="editExModal"><div class="modal-inner"><h3>✏️ 调整动作</h3>
+  <p id="editExName" style="font-weight:700;margin-bottom:12px;color:var(--accent)"></p>
+  <input type="hidden" id="editExIdx">
+  <div class="form-row"><label>组数</label><input type="number" id="editExSets" min="1" max="20"></div>
+  <div class="form-row"><label>次数/时长</label><input type="text" id="editExReps"></div>
+  <div class="form-row"><label>重量 kg</label><input type="number" id="editExWeight" step="0.5" placeholder="选填"></div>
+  <div class="modal-btns"><button class="btn btn-small" onclick="hideModal('editExModal')">取消</button><button class="btn btn-primary" onclick="saveEditEx()">保存</button></div>
+</div></div>
+
 <div class="modal" id="addMealModal"><div class="modal-inner"><h3>记录饮食</h3>
   <div class="form-row"><label>餐别</label><select id="mealType"><option value="breakfast">早餐</option><option value="lunch">午餐</option><option value="dinner">晚餐</option><option value="snack">加餐</option></select></div>
   <div class="form-row"><label>搜索食物</label><input type="text" id="foodSearch" placeholder="输入食物名称搜索..." oninput="searchFood()" autocomplete="off"></div>
@@ -275,8 +284,8 @@ function renderWorkout(){
   const h=exs.length?exs.map((e,i)=>{
     const rm=calc1RM(e.weight,e.reps);
     return `<div class="ex-row"><div class="ex-check${e.done?' done':''}" onclick="toggleEx(${i})">${e.done?'✓':''}</div>
-      <div class="ex-name" style="${e.done?'text-decoration:line-through;color:var(--text3)':''}" onclick="showExTip('${e.name}')">${e.name} <span style="font-size:10px;color:var(--accent)">ℹ</span></div>
-      <div class="ex-detail">${e.sets}×${e.reps}${e.weight?' @'+e.weight+'kg':''}</div>${rm?`<div class="ex-1rm">1RM≈${rm}kg</div>`:''}
+      <div class="ex-name" style="${e.done?'text-decoration:line-through;color:var(--text3)':''}" onclick="showExTip('${e.name}')">${e.name}</div>
+      <div class="ex-detail" onclick="editEx(${i})" style="cursor:pointer" title="点击调整">${e.sets}组×${e.reps}${e.weight?' @'+e.weight+'kg':''} ✎</div>${rm?`<div class="ex-1rm">1RM≈${rm}kg</div>`:''}
       <button class="btn-small btn-danger" onclick="deleteEx(${i})" style="font-size:9px;padding:2px 6px">✕</button></div>`;
   }).join(''):'<p style="text-align:center;color:var(--text3);padding:24px">👆 选择一个训练模板<br>或点击下方按钮自定义添加</p>';
   document.getElementById('exerciseList').innerHTML=h;
@@ -284,6 +293,8 @@ function renderWorkout(){
   document.getElementById('progressFill').style.width=t?done/t*100+'%':'0';
 }
 function toggleEx(i){const e=D.exercises[today()]||[];if(e[i]){e[i].done=!e[i].done;D.exercises[today()]=e;saveData(D);renderWorkout();renderWeek();updateStreak();if(e[i].done&&e.filter(x=>x.done).length===e.length)celebrate()}}
+function editEx(i){const e=D.exercises[today()]||[];if(!e[i])return;const x=e[i];document.getElementById('editExIdx').value=i;document.getElementById('editExName').textContent=x.name;document.getElementById('editExSets').value=x.sets;document.getElementById('editExReps').value=x.reps;document.getElementById('editExWeight').value=x.weight||'';showModal('editExModal')}
+function saveEditEx(){const i=parseInt(document.getElementById('editExIdx').value);const e=D.exercises[today()]||[];if(!e[i])return;e[i].sets=parseInt(document.getElementById('editExSets').value)||3;e[i].reps=document.getElementById('editExReps').value.trim();e[i].weight=document.getElementById('editExWeight').value.trim();D.exercises[today()]=e;saveData(D);hideModal('editExModal');renderWorkout();renderWeek();toast('已更新 ✅')}
 function deleteEx(i){const e=D.exercises[today()]||[];e.splice(i,1);D.exercises[today()]=e;saveData(D);renderWorkout();renderWeek();updateStreak()}
 function addExercise(){const n=document.getElementById('exName').value.trim(),s=parseInt(document.getElementById('exSets').value)||3,r=document.getElementById('exReps').value.trim(),w=document.getElementById('exWeight').value.trim();if(!n||!r)return toast('请填写动作名称');D.exercises[today()]=(D.exercises[today()]||[]).concat([{name:n,sets:s,reps:r,weight:w,done:false}]);saveData(D);hideModal('addExModal');renderWorkout();renderWeek();updateStreak();toast('已添加 💪')}
 
