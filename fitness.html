@@ -142,7 +142,10 @@ input:focus,select:focus{border-color:var(--accent)}
   <!-- ═══ DIET TAB ═══ -->
   <div class="tab" id="tab-diet">
     <div class="card"><h3>💧 今日饮水</h3><div class="water-cups" id="waterCups"></div><p style="font-size:10px;color:var(--text3);margin-top:6px">目标8杯 · 点击杯子记录</p></div>
-    <div class="card" style="background:rgba(255,107,53,.05);border-color:var(--accent)"><p style="font-size:12px;line-height:1.8" id="dietModeTip">🎯 增肌期建议：热量盈余300-500kcal，蛋白质2g/kg体重，碳水充足</p></div>
+    <div class="card" id="dietModeCard" style="background:rgba(255,107,53,.05);border-color:var(--accent)">
+      <h3 id="dietModeTitle">🎯 增肌期饮食方案</h3>
+      <div id="dietModeDetail" style="font-size:12px;line-height:2"></div>
+    </div>
     <div class="day-tabs" id="dietDayTabs"></div>
     <div class="card"><h3>🍳 早餐</h3><div id="breakfastList"></div></div>
     <div class="card"><h3>🥗 午餐</h3><div id="lunchList"></div></div>
@@ -346,7 +349,10 @@ function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t
 // ═══════════ FITNESS MODE ═══════════
 D.mode=D.mode||'gain';
 function setMode(m){D.mode=m;saveData(D);updateModeUI();toast(m==='gain'?'💪 增肌模式：大重量少次数+热量盈余':'🔥 减脂模式：中重量多次数+热量缺口')}
-function updateModeUI(){const m=D.mode||'gain';document.getElementById('modeGain').style.background=m==='gain'?'var(--accent)':'var(--border)';document.getElementById('modeGain').style.color=m==='gain'?'#fff':'var(--text2)';document.getElementById('modeCut').style.background=m==='cut'?'var(--accent)':'var(--border)';document.getElementById('modeCut').style.color=m==='cut'?'#fff':'var(--text2)';document.getElementById('dietModeTip').textContent=D.mode==='gain'?'🎯 增肌期建议：热量盈余300-500kcal，蛋白质2g/kg体重，碳水充足':'🔥 减脂期建议：热量缺口300-500kcal，蛋白质2.2g/kg体重，低碳水';renderDiet()}
+function updateModeUI(){const m=D.mode||'gain';document.getElementById('modeGain').style.background=m==='gain'?'var(--accent)':'var(--border)';document.getElementById('modeGain').style.color=m==='gain'?'#fff':'var(--text2)';document.getElementById('modeCut').style.background=m==='cut'?'var(--accent)':'var(--border)';document.getElementById('modeCut').style.color=m==='cut'?'#fff':'var(--text2)';
+  if(m==='gain'){document.getElementById('dietModeTitle').textContent='💪 增肌期饮食方案';document.getElementById('dietModeDetail').innerHTML='🔥 <b>热量</b>：每日盈余300-500kcal<br>🥩 <b>蛋白质</b>：2g×体重kg<br>🍚 <b>碳水</b>：4-6g×体重kg，训练前后加碳<br>🥑 <b>脂肪</b>：占总热量20-25%<br>🍽 <b>餐次</b>：每日4-5餐，练后30分钟补蛋白+碳水<br>⚠ <b>别踩坑</b>：碳水是增肌燃料，别怕吃'}
+  else{document.getElementById('dietModeTitle').textContent='🔥 减脂期饮食方案';document.getElementById('dietModeDetail').innerHTML='📉 <b>热量</b>：每日缺口300-500kcal<br>🥩 <b>蛋白质</b>：2.2g×体重kg，防肌肉流失<br>🥬 <b>碳水</b>：2-3g×体重kg，训练前后吃<br>🥑 <b>脂肪</b>：占总热量15-20%<br>⏰ <b>进食</b>：可尝试16:8间歇断食<br>⚠ <b>别踩坑</b>：不能饿肚子，蛋白必须够'}
+  renderDiet();}
 
 // ═══════════ FOOD DATABASE ═══════════
 const FOOD={
