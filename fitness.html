@@ -227,11 +227,16 @@ input[type=number]{-moz-appearance:textfield}
 
 <div class="modal" id="addMealModal"><div class="modal-inner"><h3>记录饮食</h3>
   <div class="form-row"><label>餐别</label><select id="mealType"><option value="breakfast">早餐</option><option value="lunch">午餐</option><option value="dinner">晚餐</option><option value="snack">加餐</option></select></div>
-  <div class="form-row"><label>食物名称</label><input type="text" id="foodName" placeholder="如：鸡胸肉 200g"></div>
-  <div class="form-row"><label>热量(kcal)</label><input type="number" id="foodKcal" placeholder="如：250"></div>
-  <div class="form-row"><label>蛋白质(g)</label><input type="number" id="foodProtein" placeholder="选填"></div>
-  <div class="form-row"><label>碳水(g)</label><input type="number" id="foodCarbs" placeholder="选填"></div>
-  <div class="form-row"><label>脂肪(g)</label><input type="number" id="foodFat" placeholder="选填"></div>
+  <div class="form-row"><label>搜索食物</label><input type="text" id="foodSearch" placeholder="输入食物名称搜索..." oninput="searchFood()" autocomplete="off"></div>
+  <div id="foodSearchResults" style="max-height:150px;overflow-y:auto;margin-bottom:8px"></div>
+  <div class="form-row"><label id="selectedFoodLabel" style="color:var(--accent)">👆 请选择食物</label></div>
+  <div class="form-row"><label>吃了多少克？</label><input type="number" id="foodGrams" placeholder="如：200" min="1" oninput="calcMealKcal()"></div>
+  <div style="display:flex;gap:8px;margin-bottom:10px">
+    <div style="flex:1;text-align:center;padding:8px;background:rgba(255,255,255,.03);border-radius:8px"><div style="font-size:20px;font-weight:700;color:var(--accent)" id="calcKcal">0</div><div style="font-size:10px;color:var(--text3)">热量 kcal</div></div>
+    <div style="flex:1;text-align:center;padding:8px;background:rgba(255,255,255,.03);border-radius:8px"><div style="font-size:20px;font-weight:700;color:var(--blue)" id="calcProtein">0g</div><div style="font-size:10px;color:var(--text3)">蛋白质</div></div>
+    <div style="flex:1;text-align:center;padding:8px;background:rgba(255,255,255,.03);border-radius:8px"><div style="font-size:20px;font-weight:700;color:var(--yellow)" id="calcCarbs">0g</div><div style="font-size:10px;color:var(--text3)">碳水</div></div>
+    <div style="flex:1;text-align:center;padding:8px;background:rgba(255,255,255,.03);border-radius:8px"><div style="font-size:20px;font-weight:700;color:var(--red)" id="calcFat">0g</div><div style="font-size:10px;color:var(--text3)">脂肪</div></div>
+  </div>
   <div class="modal-btns"><button class="btn btn-small" onclick="hideModal('addMealModal')">取消</button><button class="btn btn-primary" onclick="addMeal()">记录</button></div>
 </div></div>
 
@@ -413,12 +418,60 @@ function renderDiet(){
   document.getElementById('dietTotal').textContent=total+' kcal';document.getElementById('dietProtein').textContent=prot+'g';document.getElementById('dietCarbs').textContent=carbs+'g';document.getElementById('dietFat').textContent=fat+'g';
   renderWater();
 }
+// ═══════════════ FOOD DB ═══════════════
+// 每100g数据：热量(kcal), 蛋白质(g), 碳水(g), 脂肪(g)
+const FOOD_DB={
+  // 蛋白类
+  '鸡胸肉':[133,31,0,3.6],'鸡腿肉':[181,26,0,8],'鸡蛋':[144,13.3,1.5,8.8],'蛋清':[48,11,0.7,0],'牛肉（瘦）':[125,22.3,0,4.2],'牛排':[271,25,0,19],'猪里脊':[155,20,0,8],'猪瘦肉':[143,20.3,0,6.2],'三文鱼':[208,20,0,13],'虾仁':[48,12,0,0.4],'金枪鱼':[116,26,0,1],'鳕鱼':[82,18,0,0.7],'蛋白粉':[380,80,5,5],'豆腐':[76,8,2,4.8],'牛奶':[54,3,5,3.2],'酸奶':[61,3.5,7,3.3],'奶酪':[350,25,2,28],
+  // 主食类
+  '白米饭':[116,2.6,25.9,0.3],'糙米饭':[123,2.7,25,1],'全麦面包':[247,13,41,3.4],'白面包':[265,9,49,3.2],'燕麦':[367,13.5,61,8],'红薯':[86,1.6,20,0.1],'紫薯':[82,2.3,17.6,0.2],'土豆':[76,2,17.5,0.1],'玉米':[112,4,22.8,1.2],'意大利面（熟）':[131,5,25,1.1],'面条（煮）':[110,4,22,0.7],'馒头':[223,7,44,1.1],
+  // 蔬菜类
+  '西兰花':[34,2.8,7,0.4],'菠菜':[23,2.9,3.6,0.4],'生菜':[15,1.4,2.8,0.2],'番茄':[18,0.9,3.9,0.2],'黄瓜':[15,0.7,2.9,0.1],'胡萝卜':[41,0.9,10,0.2],'洋葱':[40,1.1,9.3,0.1],'青椒':[20,0.9,4.6,0.2],'蘑菇':[22,3.1,3.3,0.3],'芦笋':[20,2.2,3.9,0.1],
+  // 水果类
+  '苹果':[52,0.3,14,0.2],'香蕉':[89,1.1,22.8,0.3],'橙子':[47,0.9,11.8,0.1],'葡萄':[69,0.7,18,0.2],'蓝莓':[57,0.7,14.5,0.3],'草莓':[32,0.7,7.7,0.3],'西瓜':[30,0.6,7.6,0.2],'牛油果':[160,2,8.5,14.7],'芒果':[60,0.8,15,0.4],
+  // 油脂调味
+  '橄榄油':[884,0,0,100],'花生油':[884,0,0,100],'黄油':[717,0.9,0.1,81],'花生酱':[588,25,20,50],'沙拉酱':[390,1,3,40],
+  // 零食饮料
+  '蛋白棒':[380,33,35,12],'黑巧克力':[546,5,61,31],'坚果（混合）':[607,20,21,56],'杏仁':[579,21,21.6,49.9],'核桃':[654,15,14,65],'能量饮料':[45,0,11,0],'椰子水':[19,0,3.7,0],'咖啡（黑）':[2,0.1,0,0],'拿铁':[56,2.8,5,2.8],
+  // 中式菜肴
+  '炒青菜':[45,2,4,3],'番茄炒蛋':[87,5,3,6],'红烧鸡块':[180,22,5,8],'清蒸鱼':[105,18,0,3.5],'水饺（猪肉）':[210,7,28,8],'白粥':[46,1,10,0.3],'蛋炒饭':[165,5,25,5],'麻辣烫（清汤）':[68,6,5,3],
+};
+
+let selectedFood=null;
+function searchFood(){
+  const q=document.getElementById('foodSearch').value.trim().toLowerCase();
+  const r=document.getElementById('foodSearchResults');
+  if(!q){r.innerHTML='';selectedFood=null;document.getElementById('selectedFoodLabel').textContent='👆 请选择食物';document.getElementById('calcKcal').textContent='0';return}
+  const matches=Object.entries(FOOD_DB).filter(([k])=>k.includes(q)||k.toLowerCase().includes(q)).slice(0,8);
+  r.innerHTML=matches.map(([k,v])=>`<div style="padding:8px 10px;cursor:pointer;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center" onclick="selectFood('${k}')"><span>${k}</span><span style="font-size:11px;color:var(--accent)">${v[0]}kcal/100g</span></div>`).join('');
+}
+function selectFood(name){
+  selectedFood=name;
+  document.getElementById('foodSearch').value=name;
+  document.getElementById('foodSearchResults').innerHTML='';
+  document.getElementById('selectedFoodLabel').innerHTML=`✅ 已选：<b>${name}</b> · ${FOOD_DB[name][0]} kcal / 100g · 蛋白${FOOD_DB[name][1]}g · 碳水${FOOD_DB[name][2]}g · 脂肪${FOOD_DB[name][3]}g`;
+  calcMealKcal();
+}
+function calcMealKcal(){
+  const g=parseFloat(document.getElementById('foodGrams').value)||0;
+  if(!selectedFood||!g){document.getElementById('calcKcal').textContent='0';return}
+  const d=FOOD_DB[selectedFood];const r=g/100;
+  document.getElementById('calcKcal').textContent=Math.round(d[0]*r);
+  document.getElementById('calcProtein').textContent=(d[1]*r).toFixed(1)+'g';
+  document.getElementById('calcCarbs').textContent=(d[2]*r).toFixed(1)+'g';
+  document.getElementById('calcFat').textContent=(d[3]*r).toFixed(1)+'g';
+}
+
 function addMeal(){
-  const t=document.getElementById('mealType').value,n=document.getElementById('foodName').value.trim(),k=parseInt(document.getElementById('foodKcal').value)||0;
-  if(!n)return toast('请输入食物名称');
+  const t=document.getElementById('mealType').value;
+  if(!selectedFood)return toast('请选择一种食物');
+  const g=parseFloat(document.getElementById('foodGrams').value)||0;
+  if(!g||g<=0)return toast('请输入吃了多少克');
+  const d=FOOD_DB[selectedFood];const r=g/100;
   const dd=D._dietDate||today();D.meals[dd]=D.meals[dd]||{breakfast:[],lunch:[],dinner:[],snack:[]};
-  D.meals[dd][t].push({name:n,kcal:k,protein:parseInt(document.getElementById('foodProtein').value)||0,carbs:parseInt(document.getElementById('foodCarbs').value)||0,fat:parseInt(document.getElementById('foodFat').value)||0});
+  D.meals[dd][t].push({name:`${selectedFood} ${g}g`,kcal:Math.round(d[0]*r),protein:Math.round(d[1]*r*10)/10,carbs:Math.round(d[2]*r*10)/10,fat:Math.round(d[3]*r*10)/10});
   saveData(D);hideModal('addMealModal');renderDiet();toast('已记录 🍽');
+  selectedFood=null;document.getElementById('foodSearch').value='';document.getElementById('foodGrams').value='';document.getElementById('selectedFoodLabel').textContent='👆 请选择食物';
 }
 function deleteMeal(type,i){const dd=D._dietDate||today();if(D.meals[dd]&&D.meals[dd][type]){D.meals[dd][type].splice(i,1);saveData(D);renderDiet()}}
 
