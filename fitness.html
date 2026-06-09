@@ -253,7 +253,8 @@ function loadQuickTemplate(){
   const exs=(T[v]||[]).map(e=>({...e,done:false}));if(!exs.length)return;
   D.mode=v.startsWith('gain')?'gain':'cut';saveData(D);updateModeUI();
   D.exercises[today()]=exs;saveData(D);renderWorkout();renderWeek();updateStreak();
-  toast('✅ '+document.getElementById('quickTemplate').selectedOptions[0].text);
+  document.getElementById('exerciseList').scrollIntoView({behavior:'smooth'});
+  toast('✅ 已加载！共'+exs.length+'个动作');
 }
 
 function loadBeginnerPlan(){
