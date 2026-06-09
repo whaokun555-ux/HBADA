@@ -124,6 +124,36 @@ input[type=number]{-moz-appearance:textfield}
 
   <!-- ═══ TAB 1: 训练 ═══ -->
   <div class="tab active" id="tab-workout">
+    <div class="card" id="beginnerCard">
+      <h3>🐣 新手入门指南 <button class="btn-small" onclick="document.getElementById('beginnerContent').style.display=document.getElementById('beginnerContent').style.display==='none'?'block':'none'" style="margin-left:auto;font-size:10px">展开/收起</button></h3>
+      <div id="beginnerContent" style="display:block">
+        <div class="good" style="margin-bottom:10px">
+          <b>🏁 零基础第一周怎么练？</b><br>
+          ① <b>频率</b>：每周 3 次，隔天练（如周一/三/五），给身体恢复时间<br>
+          ② <b>内容</b>：每次做全身训练，不要急于分化（胸/背/腿分开不适合新手）<br>
+          ③ <b>重量</b>：选能做 <b>10-12 次</b>刚好力竭的重量，不要贪重<br>
+          ④ <b>组间休息</b>：60-90 秒，不需要太赶
+        </div>
+        <div class="highlight" style="margin-bottom:10px">
+          <b>📅 推荐新手周计划（全身训练 ×3次/周）</b><br>
+          <b>周一</b>：深蹲 + 卧推 + 划船 + 推举 + 平板支撑（各3组×10次）<br>
+          <b>周三</b>：硬拉 + 哑铃卧推 + 引体向上(或助力) + 侧平举 + 卷腹<br>
+          <b>周五</b>：箭步蹲 + 器械推胸 + 高位下拉 + 弯举 + 悬垂举腿
+        </div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.8">
+          <b>💡 新手必知：</b><br>
+          • <b>动作标准比重量重要</b>——先学动作，再加重量<br>
+          • <b>每次训练前热身5分钟</b>（跑步机快走/跳绳）<br>
+          • <b>练完拉伸</b>，第二天不会太酸<br>
+          • <b>第一周不要练到吐</b>——循序渐进，身体需要适应期<br>
+          • <b>饮食比训练更重要</b>——蛋白质吃够，碳水别怕<br>
+          • <b>多喝水</b>——训练日至少 2-3L<br>
+          • <b>保证睡眠 7-8 小时</b>——肌肉在睡觉时生长
+        </div>
+        <div style="margin-top:10px"><button class="btn btn-primary" onclick="loadBeginnerPlan()">🚀 一键加载新手全身训练</button></div>
+      </div>
+    </div>
+
     <div class="card">
       <h3>🎯 今日训练 <span style="font-weight:400;font-size:11px;color:var(--text3);margin-left:auto" id="weeklySummary"></span></h3>
       <!-- Step 1: 性别 -->
@@ -313,6 +343,11 @@ function selectFilter(level,val){
     document.getElementById('templateButtons').innerHTML=`<button class="btn-small" onclick="loadFilteredTemplate('${val}')" style="background:var(--accent);color:#fff;flex:1">✅ 加载全部(${exs.length}动作)</button>`;
   }
 }
+function loadBeginnerPlan(){
+  const plan=[{name:'杠铃深蹲（空杆学习）',sets:3,reps:'10-12次',weight:''},{name:'杠铃卧推（空杆学习）',sets:3,reps:'10-12次',weight:''},{name:'高位下拉',sets:3,reps:'10-12次',weight:''},{name:'哑铃推举',sets:3,reps:'10-12次',weight:''},{name:'坐姿划船',sets:3,reps:'10-12次',weight:''},{name:'腿举',sets:3,reps:'10-12次',weight:''},{name:'平板支撑',sets:3,reps:'30-45秒',weight:''},{name:'卷腹',sets:3,reps:'15次',weight:''}];
+  D.exercises[today()]=plan;saveData(D);renderWorkout();renderWeek();updateStreak();toast('🐣 新手全身训练已加载！先用空杆学动作，再慢慢加重');
+}
+
 function loadFilteredTemplate(key){
   const isCardio=wizard.type==='cardio';
   const temps=isCardio?{
