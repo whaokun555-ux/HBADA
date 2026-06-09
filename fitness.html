@@ -126,17 +126,26 @@ input[type=number]{-moz-appearance:textfield}
   <div class="tab active" id="tab-workout">
     <div class="card">
       <h3>🎯 今日训练 <span style="font-weight:400;font-size:11px;color:var(--text3);margin-left:auto" id="weeklySummary"></span></h3>
-      <select id="templateSelect" onchange="loadTemplate()" style="margin-bottom:10px">
-        <option value="">📋 选择训练模板...</option>
-        <option value="chest">🏋 胸部轰炸日</option>
-        <option value="back">🏋 背部雕刻日</option>
-        <option value="legs">🏋 腿部撕裂日</option>
-        <option value="shoulders">🏋 肩部炮弹日</option>
-        <option value="arms">🏋 手臂充血日</option>
-        <option value="core">🏋 核心锻造日</option>
-        <option value="cardio">🏃 燃脂有氧日</option>
-        <option value="fullbody">🏋 全身轰炸日</option>
-      </select>
+      <!-- Step 1: 性别 -->
+      <div style="margin-bottom:8px" id="stepGender">
+        <p style="font-size:12px;color:var(--text2);margin-bottom:6px">👤 选择训练模式</p>
+        <div class="card-row"><button class="btn-small" onclick="selectFilter('gender','male')" id="btnGenderMale" style="flex:1">🙋‍♂️ 男生</button><button class="btn-small" onclick="selectFilter('gender','female')" id="btnGenderFemale" style="flex:1">🙋‍♀️ 女士</button></div>
+      </div>
+      <!-- Step 2: 有氧/无氧 -->
+      <div style="margin-bottom:8px;display:none" id="stepType">
+        <p style="font-size:12px;color:var(--text2);margin-bottom:6px">🏃 训练类型</p>
+        <div class="card-row"><button class="btn-small" onclick="selectFilter('type','strength')" id="btnTypeStrength" style="flex:1">🏋 无氧·力量</button><button class="btn-small" onclick="selectFilter('type','cardio')" id="btnTypeCardio" style="flex:1">🏃 有氧·燃脂</button></div>
+      </div>
+      <!-- Step 3: 部位 -->
+      <div style="margin-bottom:8px;display:none" id="stepPart">
+        <p style="font-size:12px;color:var(--text2);margin-bottom:6px">🎯 训练部位</p>
+        <div id="partButtons" class="card-row"></div>
+      </div>
+      <!-- Step 4: 模板 -->
+      <div style="margin-bottom:8px;display:none" id="stepTemplate">
+        <p style="font-size:12px;color:var(--text2);margin-bottom:6px">📋 选择训练计划</p>
+        <div id="templateButtons" class="card-row"></div>
+      </div>
       <div id="exerciseList"></div>
       <div class="progress-bar" id="workoutProgress"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
       <button class="btn btn-primary" onclick="showModal('addExerciseModal')" style="margin-top:12px">+ 添加动作</button>
@@ -266,17 +275,65 @@ const QUOTES=[
   {q:'"只有练吐了，才算练到位了"',a:'— 健美老炮'},
 ];
 
-const MUSCLES={chest:'胸',back:'背',legs:'腿',shoulders:'肩',arms:'手臂',core:'核心',cardio:'有氧',fullbody:'全身'};
-const TEMPLATES={
-  chest:[{name:'杠铃卧推',sets:4,reps:'8-10',weight:''},{name:'哑铃上斜卧推',sets:3,reps:'10-12',weight:''},{name:'器械飞鸟',sets:3,reps:'12-15',weight:''},{name:'双杠臂屈伸',sets:3,reps:'力竭',weight:''},{name:'龙门架夹胸',sets:3,reps:'12-15',weight:''}],
-  back:[{name:'引体向上',sets:4,reps:'8-10',weight:''},{name:'杠铃划船',sets:4,reps:'8-10',weight:''},{name:'高位下拉',sets:3,reps:'10-12',weight:''},{name:'坐姿划船',sets:3,reps:'10-12',weight:''},{name:'直臂下压',sets:3,reps:'12-15',weight:''}],
-  legs:[{name:'杠铃深蹲',sets:4,reps:'8-10',weight:''},{name:'腿举',sets:3,reps:'10-12',weight:''},{name:'罗马尼亚硬拉',sets:3,reps:'10-12',weight:''},{name:'腿弯举',sets:3,reps:'12-15',weight:''},{name:'提踵',sets:4,reps:'15-20',weight:''}],
-  shoulders:[{name:'杠铃推举',sets:4,reps:'8-10',weight:''},{name:'哑铃侧平举',sets:3,reps:'12-15',weight:''},{name:'面拉',sets:3,reps:'12-15',weight:''},{name:'哑铃前平举',sets:3,reps:'12-15',weight:''}],
-  arms:[{name:'杠铃弯举',sets:3,reps:'10-12',weight:''},{name:'锤式弯举',sets:3,reps:'10-12',weight:''},{name:'绳索下压',sets:3,reps:'12-15',weight:''},{name:'窄距卧推',sets:3,reps:'8-10',weight:''}],
-  core:[{name:'平板支撑',sets:3,reps:'45秒',weight:''},{name:'卷腹',sets:3,reps:'15-20',weight:''},{name:'悬垂举腿',sets:3,reps:'10-12',weight:''},{name:'俄罗斯转体',sets:3,reps:'20次',weight:''}],
-  cardio:[{name:'跑步机',sets:1,reps:'20-30分钟',weight:''},{name:'椭圆机',sets:1,reps:'15-20分钟',weight:''},{name:'划船机',sets:1,reps:'10-15分钟',weight:''},{name:'动感单车',sets:1,reps:'15-20分钟',weight:''}],
-  fullbody:[{name:'杠铃深蹲',sets:3,reps:'8-10',weight:''},{name:'杠铃卧推',sets:3,reps:'8-10',weight:''},{name:'引体向上',sets:3,reps:'8-10',weight:''},{name:'杠铃推举',sets:3,reps:'8-10',weight:''},{name:'杠铃划船',sets:3,reps:'8-10',weight:''},{name:'罗马尼亚硬拉',sets:3,reps:'8-10',weight:''}],
-};
+// ═══════════════ TRAINING WIZARD ═══════════════
+let wizard={gender:null,type:null,part:null};
+const PARTS={chest:'胸',back:'背',legs:'腿',shoulders:'肩',arms:'手臂',core:'核心'};
+const PARTS_CARDIO=['treadmill','bike','elliptical','rowing','hiit','jump'];
+
+function selectFilter(level,val){
+  wizard[level]=val;
+  // Highlight active button
+  document.querySelectorAll(`[id^=btn${level.charAt(0).toUpperCase()+level.slice(1)}]`).forEach(b=>b.style.background=val===b.textContent.trim().slice(-2)||b.textContent.includes(val)?'var(--accent)':'var(--border)');
+  if(level==='gender'){document.getElementById('stepType').style.display='block';wizard.type=null;document.getElementById('stepPart').style.display='none';document.getElementById('stepTemplate').style.display='none'}
+  if(level==='type'){
+    document.getElementById('stepPart').style.display='block';wizard.part=null;document.getElementById('stepTemplate').style.display='none';
+    const parts=val==='cardio'?PARTS_CARDIO:Object.keys(PARTS);
+    const labels=val==='cardio'?['🏃 跑步机','🚴 动感单车','🚣 椭圆机','🚣 划船机','⚡ HIIT','🦘 跳绳']:Object.values(PARTS).map((v,i)=>['🏋 胸','🏋 背','🏋 腿','🏋 肩','💪 手臂','🎯 核心'][i]);
+    document.getElementById('partButtons').innerHTML=parts.map((p,i)=>`<button class="btn-small" onclick="selectFilter('part','${p}')" id="btnPart${p}" style="flex:1;min-width:60px">${labels[i]}</button>`).join('');
+  }
+  if(level==='part'){
+    document.getElementById('stepTemplate').style.display='block';
+    const isCardio=wizard.type==='cardio';
+    let temps=isCardio?{
+      treadmill:[{name:'跑步机慢跑',sets:1,reps:'20-30分钟',weight:''},{name:'跑步机快走',sets:1,reps:'30-40分钟',weight:''},{name:'跑步机HIIT',sets:1,reps:'15-20分钟',weight:''}],
+      bike:[{name:'动感单车',sets:1,reps:'20-30分钟',weight:''},{name:'单车HIIT',sets:1,reps:'15分钟',weight:''}],
+      elliptical:[{name:'椭圆机匀速',sets:1,reps:'20-30分钟',weight:''},{name:'椭圆机间歇',sets:1,reps:'15-20分钟',weight:''}],
+      rowing:[{name:'划船机',sets:1,reps:'15-20分钟',weight:''},{name:'划船机HIIT',sets:1,reps:'10-15分钟',weight:''}],
+      hiit:[{name:'波比跳',sets:3,reps:'45秒',weight:''},{name:'开合跳',sets:3,reps:'45秒',weight:''},{name:'高抬腿',sets:3,reps:'30秒',weight:''},{name:'深蹲跳',sets:3,reps:'12-15次',weight:''},{name:'登山者',sets:3,reps:'45秒',weight:''}],
+      jump:[{name:'跳绳',sets:3,reps:'3分钟',weight:''},{name:'双摇跳绳',sets:3,reps:'1分钟',weight:''}],
+    }:{chest:[{name:'杠铃卧推',sets:4,reps:'8-10次',weight:''},{name:'哑铃上斜卧推',sets:3,reps:'10-12次',weight:''},{name:'器械飞鸟',sets:3,reps:'12-15次',weight:''},{name:'双杠臂屈伸',sets:3,reps:'力竭',weight:''},{name:'龙门架夹胸',sets:3,reps:'12-15次',weight:''},{name:'哑铃飞鸟',sets:3,reps:'12-15次',weight:''},{name:'器械推胸',sets:3,reps:'10-12次',weight:''},{name:'俯卧撑',sets:4,reps:'力竭',weight:''}],
+      back:[{name:'引体向上',sets:4,reps:'8-10次',weight:''},{name:'杠铃划船',sets:4,reps:'8-10次',weight:''},{name:'高位下拉',sets:3,reps:'10-12次',weight:''},{name:'坐姿划船',sets:3,reps:'10-12次',weight:''},{name:'直臂下压',sets:3,reps:'12-15次',weight:''},{name:'单臂哑铃划船',sets:3,reps:'10-12次',weight:''},{name:'T杠划船',sets:3,reps:'10-12次',weight:''},{name:'硬拉',sets:3,reps:'6-8次',weight:''}],
+      legs:[{name:'杠铃深蹲',sets:4,reps:'8-10次',weight:''},{name:'腿举',sets:3,reps:'10-12次',weight:''},{name:'罗马尼亚硬拉',sets:3,reps:'10-12次',weight:''},{name:'腿弯举',sets:3,reps:'12-15次',weight:''},{name:'提踵',sets:4,reps:'15-20次',weight:''},{name:'哑铃箭步蹲',sets:3,reps:'10-12次',weight:''},{name:'髋外展',sets:3,reps:'15-20次',weight:''},{name:'臀桥',sets:3,reps:'15次',weight:''},{name:'保加利亚分腿蹲',sets:3,reps:'10-12次',weight:''}],
+      shoulders:[{name:'杠铃推举',sets:4,reps:'8-10次',weight:''},{name:'哑铃侧平举',sets:3,reps:'12-15次',weight:''},{name:'面拉',sets:3,reps:'12-15次',weight:''},{name:'哑铃前平举',sets:3,reps:'12-15次',weight:''},{name:'阿诺德推举',sets:3,reps:'10-12次',weight:''},{name:'俯身飞鸟',sets:3,reps:'12-15次',weight:''},{name:'杠铃提拉',sets:3,reps:'10-12次',weight:''}],
+      arms:[{name:'杠铃弯举',sets:3,reps:'10-12次',weight:''},{name:'锤式弯举',sets:3,reps:'10-12次',weight:''},{name:'绳索下压',sets:3,reps:'12-15次',weight:''},{name:'窄距卧推',sets:3,reps:'8-10次',weight:''},{name:'集中弯举',sets:3,reps:'10-12次',weight:''},{name:'仰卧臂屈伸',sets:3,reps:'10-12次',weight:''},{name:'牧师凳弯举',sets:3,reps:'10-12次',weight:''}],
+      core:[{name:'平板支撑',sets:3,reps:'45秒',weight:''},{name:'卷腹',sets:3,reps:'15-20次',weight:''},{name:'悬垂举腿',sets:3,reps:'10-12次',weight:''},{name:'俄罗斯转体',sets:3,reps:'20次',weight:''},{name:'仰卧抬腿',sets:3,reps:'15次',weight:''},{name:'Dead Bug',sets:3,reps:'10次/侧',weight:''},{name:'V字卷腹',sets:3,reps:'12-15次',weight:''}]};
+    // Gender-specific filter (可选)
+    const exs=temps[val]||[];
+    const femaleFriendly=['chest','arms']; // 女生更多臀腿肩的建议
+    document.getElementById('templateButtons').innerHTML=`<button class="btn-small" onclick="loadFilteredTemplate('${val}')" style="background:var(--accent);color:#fff;flex:1">✅ 加载全部(${exs.length}动作)</button>`;
+  }
+}
+function loadFilteredTemplate(key){
+  const isCardio=wizard.type==='cardio';
+  const temps=isCardio?{
+    treadmill:[{name:'跑步机慢跑',sets:1,reps:'20-30分钟',weight:''},{name:'跑步机快走',sets:1,reps:'30-40分钟',weight:''},{name:'跑步机HIIT',sets:1,reps:'15-20分钟',weight:''}],
+    bike:[{name:'动感单车',sets:1,reps:'20-30分钟',weight:''},{name:'单车HIIT',sets:1,reps:'15分钟',weight:''}],
+    elliptical:[{name:'椭圆机匀速',sets:1,reps:'20-30分钟',weight:''},{name:'椭圆机间歇',sets:1,reps:'15-20分钟',weight:''}],
+    rowing:[{name:'划船机',sets:1,reps:'15-20分钟',weight:''},{name:'划船机HIIT',sets:1,reps:'10-15分钟',weight:''}],
+    hiit:[{name:'波比跳',sets:3,reps:'45秒',weight:''},{name:'开合跳',sets:3,reps:'45秒',weight:''},{name:'高抬腿',sets:3,reps:'30秒',weight:''},{name:'深蹲跳',sets:3,reps:'12-15次',weight:''},{name:'登山者',sets:3,reps:'45秒',weight:''}],
+    jump:[{name:'跳绳',sets:3,reps:'3分钟',weight:''},{name:'双摇跳绳',sets:3,reps:'1分钟',weight:''}],
+  }:{chest:[{name:'杠铃卧推',sets:4,reps:'8-10次',weight:''},{name:'哑铃上斜卧推',sets:3,reps:'10-12次',weight:''},{name:'器械飞鸟',sets:3,reps:'12-15次',weight:''},{name:'双杠臂屈伸',sets:3,reps:'力竭',weight:''},{name:'龙门架夹胸',sets:3,reps:'12-15次',weight:''},{name:'哑铃飞鸟',sets:3,reps:'12-15次',weight:''},{name:'器械推胸',sets:3,reps:'10-12次',weight:''},{name:'俯卧撑',sets:4,reps:'力竭',weight:''}],
+    back:[{name:'引体向上',sets:4,reps:'8-10次',weight:''},{name:'杠铃划船',sets:4,reps:'8-10次',weight:''},{name:'高位下拉',sets:3,reps:'10-12次',weight:''},{name:'坐姿划船',sets:3,reps:'10-12次',weight:''},{name:'直臂下压',sets:3,reps:'12-15次',weight:''},{name:'单臂哑铃划船',sets:3,reps:'10-12次',weight:''},{name:'T杠划船',sets:3,reps:'10-12次',weight:''},{name:'硬拉',sets:3,reps:'6-8次',weight:''}],
+    legs:[{name:'杠铃深蹲',sets:4,reps:'8-10次',weight:''},{name:'腿举',sets:3,reps:'10-12次',weight:''},{name:'罗马尼亚硬拉',sets:3,reps:'10-12次',weight:''},{name:'腿弯举',sets:3,reps:'12-15次',weight:''},{name:'提踵',sets:4,reps:'15-20次',weight:''},{name:'哑铃箭步蹲',sets:3,reps:'10-12次',weight:''},{name:'髋外展',sets:3,reps:'15-20次',weight:''},{name:'臀桥',sets:3,reps:'15次',weight:''},{name:'保加利亚分腿蹲',sets:3,reps:'10-12次',weight:''}],
+    shoulders:[{name:'杠铃推举',sets:4,reps:'8-10次',weight:''},{name:'哑铃侧平举',sets:3,reps:'12-15次',weight:''},{name:'面拉',sets:3,reps:'12-15次',weight:''},{name:'哑铃前平举',sets:3,reps:'12-15次',weight:''},{name:'阿诺德推举',sets:3,reps:'10-12次',weight:''},{name:'俯身飞鸟',sets:3,reps:'12-15次',weight:''},{name:'杠铃提拉',sets:3,reps:'10-12次',weight:''}],
+    arms:[{name:'杠铃弯举',sets:3,reps:'10-12次',weight:''},{name:'锤式弯举',sets:3,reps:'10-12次',weight:''},{name:'绳索下压',sets:3,reps:'12-15次',weight:''},{name:'窄距卧推',sets:3,reps:'8-10次',weight:''},{name:'集中弯举',sets:3,reps:'10-12次',weight:''},{name:'仰卧臂屈伸',sets:3,reps:'10-12次',weight:''},{name:'牧师凳弯举',sets:3,reps:'10-12次',weight:''}],
+    core:[{name:'平板支撑',sets:3,reps:'45秒',weight:''},{name:'卷腹',sets:3,reps:'15-20次',weight:''},{name:'悬垂举腿',sets:3,reps:'10-12次',weight:''},{name:'俄罗斯转体',sets:3,reps:'20次',weight:''},{name:'仰卧抬腿',sets:3,reps:'15次',weight:''},{name:'Dead Bug',sets:3,reps:'10次/侧',weight:''},{name:'V字卷腹',sets:3,reps:'12-15次',weight:''}]};
+  const exs=(temps[key]||[]).map(e=>({...e,done:false}));
+  D.exercises[today()]=exs;saveData(D);renderWorkout();renderWeek();updateStreak();
+  const gender=wizard.gender==='male'?'男生':'女士';
+  const type=wizard.type==='cardio'?'有氧':'无氧';
+  toast(`已加载：${gender}·${type}·${PARTS[key]||key}`);
+}
 
 function loadData(){try{return JSON.parse(localStorage.getItem('fitnessPro')||'{}')}catch(e){return{}}}
 function saveData(d){localStorage.setItem('fitnessPro',JSON.stringify(d))}
@@ -308,12 +365,6 @@ function switchTab(t){
 }
 
 // ═══════════════ WORKOUT ═══════════════
-function loadTemplate(){
-  const t=document.getElementById('templateSelect').value;if(!t)return;
-  const exs=TEMPLATES[t].map(e=>({...e,done:false}));
-  D.exercises[today()]=exs;saveData(D);renderWorkout();renderWeek();updateStreak();toast(`已加载：${document.getElementById('templateSelect').selectedOptions[0].text}`);
-}
-
 function renderWorkout(){
   const exs=D.exercises[today()]||[];
   let h=exs.length?exs.map((e,i)=>{
@@ -360,9 +411,10 @@ function renderWeek(){
   // Weekly stats
   const weekDays=days;let wSets=0,wExs=0,wDone=0;weekDays.forEach(d=>{(D.exercises[d]||[]).forEach(e=>{wExs++;wSets+=e.sets||0;if(e.done)wDone++})});
   document.getElementById('weeklySummary').textContent=`本周${wDone}/${wExs}动作 · ${wSets}组`;
-  // Muscle map
-  let hitMuscles={};weekDays.forEach(d=>{if((D.exercises[d]||[]).some(e=>e.done)){const t=Object.entries(TEMPLATES).find(([k,v])=>v.some(te=>D.exercises[d].some(e=>e.name===te.name&&e.done)));if(t)hitMuscles[t[0]]=true;}});
-  document.getElementById('muscleMap').innerHTML=Object.entries(MUSCLES).map(([k,v])=>`<div class="muscle-dot${hitMuscles[k]?' hit':''}">${v}</div>`).join('');
+  // Muscle map - simplified: just show all body parts, highlight based on exercise names
+  const MUSCLE_KW={胸:['卧推','飞鸟','夹胸','臂屈伸','俯卧撑','推胸'],背:['引体','划船','下拉','硬拉','直臂'],腿:['深蹲','腿举','箭步','臀桥','腿弯','提踵','髋外展'],肩:['推举','侧平举','面拉','前平举','飞鸟','提拉'],手臂:['弯举','下压','臂屈伸','窄距'],核心:['平板','卷腹','举腿','转体','抬腿'],有氧:['跑步','单车','椭圆','划船','跳绳','HIIT','波比','开合跳','高抬腿']};
+  let hitMuscles={};weekDays.forEach(d=>{const exs=D.exercises[d]||[];Object.entries(MUSCLE_KW).forEach(([k,kws])=>{if(exs.some(e=>e.done&&kws.some(kw=>e.name.includes(kw))))hitMuscles[k]=true})});
+  document.getElementById('muscleMap').innerHTML=Object.keys(MUSCLE_KW).map(k=>`<div class="muscle-dot${hitMuscles[k]?' hit':''}">${k}</div>`).join('');
   // Achievements
   const achievements=[{key:'first',label:'🏅 首次训练',check:()=>wDone>0},{key:'3day',label:'🔥 连续3天',check:()=>D.streak>=3},{key:'7day',label:'👑 连续7天',check:()=>D.streak>=7},{key:'10sets',label:'⚡ 10组+',check:()=>wSets>=10},{key:'20sets',label:'💥 20组+',check:()=>wSets>=20},{key:'5types',label:'🎯 全肌群覆盖',check:()=>Object.keys(hitMuscles).length>=5}];
   document.getElementById('achievementList').innerHTML=achievements.map(a=>`<span class="achievement${a.check()?' earned':''}">${a.label}</span>`).join('');
