@@ -344,8 +344,22 @@ function selectFilter(level,val){
   }
 }
 function loadBeginnerPlan(){
-  const plan=[{name:'杠铃深蹲（空杆学习）',sets:3,reps:'10-12次',weight:''},{name:'杠铃卧推（空杆学习）',sets:3,reps:'10-12次',weight:''},{name:'高位下拉',sets:3,reps:'10-12次',weight:''},{name:'哑铃推举',sets:3,reps:'10-12次',weight:''},{name:'坐姿划船',sets:3,reps:'10-12次',weight:''},{name:'腿举',sets:3,reps:'10-12次',weight:''},{name:'平板支撑',sets:3,reps:'30-45秒',weight:''},{name:'卷腹',sets:3,reps:'15次',weight:''}];
-  D.exercises[today()]=plan;saveData(D);renderWorkout();renderWeek();updateStreak();toast('🐣 新手全身训练已加载！先用空杆学动作，再慢慢加重');
+  if(!confirm('将自动排好未来一周3次训练（今天/后天/大后天），确认加载？'))return;
+  const td=new Date();const d1=td.toISOString().split('T')[0];
+  td.setDate(td.getDate()+2);const d2=td.toISOString().split('T')[0];
+  td.setDate(td.getDate()+2);const d3=td.toISOString().split('T')[0];
+
+  // Day 1: 全身基础（学动作）
+  D.exercises[d1]=[{name:'杠铃深蹲（空杆学习）',sets:3,reps:'10-12次',weight:'',done:false},{name:'杠铃卧推（空杆学习）',sets:3,reps:'10-12次',weight:'',done:false},{name:'高位下拉',sets:3,reps:'10-12次',weight:'',done:false},{name:'坐姿划船',sets:3,reps:'10-12次',weight:'',done:false},{name:'哑铃推举',sets:3,reps:'10-12次',weight:'',done:false},{name:'平板支撑',sets:3,reps:'30秒',weight:'',done:false},{name:'卷腹',sets:3,reps:'15次',weight:'',done:false}];
+
+  // Day 2: 全身进阶（加重量）
+  D.exercises[d2]=[{name:'杠铃深蹲',sets:3,reps:'10次',weight:'',done:false},{name:'哑铃卧推',sets:3,reps:'10-12次',weight:'',done:false},{name:'引体向上（或助力）',sets:3,reps:'力竭',weight:'',done:false},{name:'腿举',sets:3,reps:'10-12次',weight:'',done:false},{name:'哑铃侧平举',sets:3,reps:'12-15次',weight:'',done:false},{name:'杠铃弯举',sets:3,reps:'10-12次',weight:'',done:false},{name:'仰卧抬腿',sets:3,reps:'15次',weight:'',done:false}];
+
+  // Day 3: 全身巩固（加动作）
+  D.exercises[d3]=[{name:'杠铃深蹲',sets:4,reps:'8-10次',weight:'',done:false},{name:'杠铃卧推',sets:4,reps:'8-10次',weight:'',done:false},{name:'硬拉',sets:3,reps:'8次',weight:'',done:false},{name:'高位下拉',sets:3,reps:'10-12次',weight:'',done:false},{name:'杠铃推举',sets:3,reps:'8-10次',weight:'',done:false},{name:'杠铃划船',sets:3,reps:'8-10次',weight:'',done:false},{name:'绳索下压',sets:3,reps:'12-15次',weight:'',done:false},{name:'悬垂举腿',sets:3,reps:'10次',weight:'',done:false}];
+
+  saveData(D);renderWorkout();renderWeek();updateStreak();
+  toast(`🐣 新手一周计划已排好！${d1} / ${d2} / ${d3} 各练一次`);
 }
 
 function loadFilteredTemplate(key){
