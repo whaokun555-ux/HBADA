@@ -504,7 +504,6 @@ function renderWorkout(){
   document.getElementById('exerciseList').innerHTML=h;
   const done=exs.filter(e=>e.done).length,total=exs.length;
   document.getElementById('progressFill').style.width=total?done/total*100+'%':0;
-  document.getElementById('templateSelect').value='';
 }
 
 function toggleEx(i){
