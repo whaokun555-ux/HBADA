@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>💪 健身助手</title>
+<style>
+:root{--bg:#1a1d23;--card:#252830;--accent:#ff6b35;--accent2:#ff8c5a;--green:#4caf84;--red:#e74c3c;--text:#eee;--text2:#999;--text3:#666;--border:#333;--radius:10px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;max-width:480px;margin:0 auto;-webkit-tap-highlight-color:transparent;user-select:none}
+header{background:var(--card);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;border-bottom:1px solid var(--border)}
+header h1{font-size:17px;font-weight:700}
+.header-btn{background:none;border:none;color:var(--text2);font-size:18px;cursor:pointer;padding:6px}
+main{padding:16px;padding-bottom:80px}
+.tab{display:none}.tab.active{display:block}
+
+/* Bottom nav */
+nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--card);display:flex;border-top:1px solid var(--border);z-index:10}
+nav button{flex:1;padding:10px 4px;background:none;border:none;color:var(--text3);font-size:10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;transition:.2s}
+nav button .icon{font-size:18px}
+nav button.active{color:var(--accent)}
+
+/* Cards */
+.card{background:var(--card);border-radius:var(--radius);padding:14px;margin-bottom:10px}
+.card h3{font-size:14px;margin-bottom:8px;color:var(--text)}
+.card-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
+/* Buttons */
+.btn{padding:10px 18px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:.2s}
+.btn-primary{background:var(--accent);color:#fff;width:100%}
+.btn-primary:hover{background:var(--accent2)}
+.btn-small{padding:6px 12px;font-size:11px;border-radius:6px;background:var(--border);color:var(--text);border:none;cursor:pointer}
+.btn-danger{background:#3d1a1a;color:var(--red)}
+.btn-green{background:#1a3d2a;color:var(--green)}
+
+/* Inputs */
+input,select,textarea{width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:#1a1d23;color:var(--text);font-size:13px;font-family:inherit;outline:none}
+input:focus,select:focus{border-color:var(--accent)}
+input[type=number]{-moz-appearance:textfield}
+
+/* Exercise item */
+.ex-row{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}
+.ex-row:last-child{border-bottom:none}
+.ex-name{flex:1;font-weight:600}
+.ex-detail{color:var(--text2);font-size:11px}
+.ex-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--text3);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-size:12px;color:transparent}
+.ex-check.done{background:var(--green);border-color:var(--green);color:#fff}
+
+/* Timer */
+.timer-circle{width:180px;height:180px;border-radius:50%;border:4px solid var(--accent);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:20px auto;position:relative}
+.timer-circle.rest{border-color:var(--green)}
+.timer-time{font-size:48px;font-weight:800;font-variant-numeric:tabular-nums}
+.timer-label{font-size:12px;color:var(--text2);margin-top:4px}
+.timer-info{text-align:center;font-size:13px;color:var(--text2);margin-top:8px}
+
+/* Meal */
+.meal-section{margin-bottom:12px}
+.meal-header{font-size:13px;font-weight:700;margin-bottom:6px;color:var(--accent)}
+.meal-row{display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px}
+.meal-row .food{flex:1}
+.meal-row .kcal{color:var(--accent);font-weight:600}
+
+/* Chart */
+.chart-bar{display:flex;align-items:flex-end;gap:8px;height:120px;padding:10px 0}
+.chart-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.chart-fill{width:100%;background:var(--accent);border-radius:4px 4px 0 0;min-height:2px}
+.chart-date{font-size:9px;color:var(--text3)}
+.chart-val{font-size:10px;color:var(--text2)}
+
+/* Modal */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;align-items:center;justify-content:center}
+.modal.show{display:flex}
+.modal-inner{background:var(--card);border-radius:var(--radius);padding:20px;width:90%;max-height:80vh;overflow-y:auto}
+.modal-inner h3{margin-bottom:14px}
+.modal-inner .form-row{margin-bottom:10px}
+.modal-inner .form-row label{display:block;font-size:11px;color:var(--text2);margin-bottom:4px}
+.modal-btns{display:flex;gap:8px;margin-top:14px}
+.modal-btns button{flex:1}
+
+/* Toast */
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 24px;border-radius:20px;font-size:13px;z-index:200;opacity:0;transition:.3s;pointer-events:none}
+.toast.show{opacity:1}
+
+/* Day selector */
+.day-tabs{display:flex;gap:4px;overflow-x:auto;padding-bottom:8px}
+.day-tab{padding:6px 12px;border-radius:16px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:11px;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.day-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>💪 健身助手</h1>
+  <button class="header-btn" onclick="showModal('settingsModal')">⚙</button>
+</header>
+
+<main>
+  <!-- ═══ TAB 1: 训练 ═══ -->
+  <div class="tab active" id="tab-workout">
+    <div class="card">
+      <h3>📅 今日训练</h3>
+      <select id="templateSelect" onchange="loadTemplate()" style="margin-bottom:10px">
+        <option value="">自定义训练</option>
+        <option value="chest">🏋 胸部训练</option>
+        <option value="back">🏋 背部训练</option>
+        <option value="legs">🏋 腿部训练</option>
+        <option value="shoulders">🏋 肩部训练</option>
+        <option value="arms">🏋 手臂训练</option>
+        <option value="core">🏋 核心训练</option>
+        <option value="cardio">🏃 有氧运动</option>
+        <option value="fullbody">🏋 全身训练</option>
+      </select>
+      <div id="exerciseList"></div>
+      <button class="btn btn-primary" onclick="showModal('addExerciseModal')" style="margin-top:10px">+ 添加动作</button>
+    </div>
+
+    <div class="card">
+      <h3>📋 本周记录</h3>
+      <div class="day-tabs" id="weekDays"></div>
+      <div id="weekLog"></div>
+    </div>
+  </div>
+
+  <!-- ═══ TAB 2: 计时器 ═══ -->
+  <div class="tab" id="tab-timer">
+    <div class="card" style="text-align:center">
+      <div class="timer-circle" id="timerCircle">
+        <div class="timer-time" id="timerDisplay">00:30</div>
+        <div class="timer-label" id="timerLabel">准备开始</div>
+      </div>
+      <div class="timer-info">
+        第 <span id="timerSet">1</span>/<span id="timerTotal">3</span> 组
+      </div>
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button class="btn btn-primary" onclick="startTimer()" id="btnTimerStart" style="flex:2">▶ 开始</button>
+        <button class="btn btn-small btn-danger" onclick="resetTimer()" style="flex:1">重置</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>⚙ 计时设置</h3>
+      <div class="card-row" style="margin-bottom:8px">
+        <label style="font-size:12px;flex:1">运动时长(秒)</label>
+        <input type="number" id="setWork" value="30" min="5" max="300" style="width:70px;text-align:center">
+      </div>
+      <div class="card-row" style="margin-bottom:8px">
+        <label style="font-size:12px;flex:1">休息时长(秒)</label>
+        <input type="number" id="setRest" value="15" min="5" max="300" style="width:70px;text-align:center">
+      </div>
+      <div class="card-row" style="margin-bottom:8px">
+        <label style="font-size:12px;flex:1">组数</label>
+        <input type="number" id="setRounds" value="3" min="1" max="20" style="width:70px;text-align:center">
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TAB 3: 饮食 ═══ -->
+  <div class="tab" id="tab-diet">
+    <div class="day-tabs" id="dietDayTabs"></div>
+    <div class="card"><h3>🍳 早餐</h3><div id="breakfastList"></div></div>
+    <div class="card"><h3>🥗 午餐</h3><div id="lunchList"></div></div>
+    <div class="card"><h3>🍲 晚餐</h3><div id="dinnerList"></div></div>
+    <div class="card"><h3>🍎 加餐/零食</h3><div id="snackList"></div></div>
+    <div class="card">
+      <div class="card-row" style="justify-content:space-between">
+        <span>今日总计</span>
+        <span id="dietTotal" style="font-weight:700;color:var(--accent)">0 kcal</span>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="showModal('addMealModal')">+ 记录饮食</button>
+  </div>
+
+  <!-- ═══ TAB 4: 身体 ═══ -->
+  <div class="tab" id="tab-body">
+    <div class="card">
+      <h3>📊 体重趋势（近7天）</h3>
+      <div class="chart-bar" id="weightChart"></div>
+    </div>
+    <div class="card">
+      <h3>📝 今日记录</h3>
+      <div class="card-row" style="margin-bottom:8px">
+        <label style="font-size:12px;flex:1">体重(kg)</label>
+        <input type="number" id="bodyWeight" step="0.1" placeholder="0.0" style="width:90px;text-align:center">
+      </div>
+      <div class="card-row" style="margin-bottom:8px">
+        <label style="font-size:12px;flex:1">体脂率(%)</label>
+        <input type="number" id="bodyFat" step="0.1" placeholder="0.0" style="width:90px;text-align:center">
+      </div>
+      <button class="btn btn-primary" onclick="saveBodyData()">保存</button>
+    </div>
+    <div class="card">
+      <h3>📋 历史记录</h3>
+      <div id="bodyHistory"></div>
+    </div>
+  </div>
+</main>
+
+<nav>
+  <button class="active" onclick="switchTab('workout')" id="nav-workout"><span class="icon">🏋</span>训练</button>
+  <button onclick="switchTab('timer')" id="nav-timer"><span class="icon">⏱</span>计时</button>
+  <button onclick="switchTab('diet')" id="nav-diet"><span class="icon">🍽</span>饮食</button>
+  <button onclick="switchTab('body')" id="nav-body"><span class="icon">📊</span>身体</button>
+</nav>
+
+<!-- ═══ MODALS ═══ -->
+<div class="modal" id="addExerciseModal">
+  <div class="modal-inner">
+    <h3>添加动作</h3>
+    <div class="form-row"><label>动作名称</label><input type="text" id="exName" placeholder="如：杠铃卧推"></div>
+    <div class="form-row"><label>组数</label><input type="number" id="exSets" value="3" min="1"></div>
+    <div class="form-row"><label>次数/时长</label><input type="text" id="exReps" placeholder="如：10次 或 30秒"></div>
+    <div class="form-row"><label>重量(选填)</label><input type="text" id="exWeight" placeholder="如：60kg"></div>
+    <div class="modal-btns">
+      <button class="btn btn-small" onclick="hideModal('addExerciseModal')">取消</button>
+      <button class="btn btn-primary" onclick="addExercise()">添加</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="addMealModal">
+  <div class="modal-inner">
+    <h3>记录饮食</h3>
+    <div class="form-row"><label>餐别</label><select id="mealType"><option value="breakfast">早餐</option><option value="lunch">午餐</option><option value="dinner">晚餐</option><option value="snack">加餐/零食</option></select></div>
+    <div class="form-row"><label>食物名称</label><input type="text" id="foodName" placeholder="如：鸡胸肉"></div>
+    <div class="form-row"><label>份量</label><input type="text" id="foodAmount" placeholder="如：200g"></div>
+    <div class="form-row"><label>热量(kcal)</label><input type="number" id="foodKcal" placeholder="如：250"></div>
+    <div class="form-row"><label>蛋白质(g)</label><input type="number" id="foodProtein" placeholder="选填"></div>
+    <div class="modal-btns">
+      <button class="btn btn-small" onclick="hideModal('addMealModal')">取消</button>
+      <button class="btn btn-primary" onclick="addMeal()">记录</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="settingsModal">
+  <div class="modal-inner">
+    <h3>⚙ 设置</h3>
+    <button class="btn btn-primary" onclick="exportData()" style="margin-bottom:8px">📤 导出训练数据</button>
+    <button class="btn btn-small" onclick="document.getElementById('importFile').click()" style="margin-bottom:8px">📥 导入训练数据</button>
+    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+    <button class="btn btn-small btn-danger" onclick="if(confirm('确定清除所有数据？')){localStorage.clear();location.reload()}">🗑 清除所有数据</button>
+    <div class="modal-btns"><button class="btn btn-small" onclick="hideModal('settingsModal')">关闭</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════ DATA ═══════════════════
+const TEMPLATES = {
+  chest:[
+    {name:'杠铃卧推',sets:4,reps:'8-10次',weight:''},
+    {name:'哑铃上斜卧推',sets:3,reps:'10-12次',weight:''},
+    {name:'器械飞鸟',sets:3,reps:'12-15次',weight:''},
+    {name:'双杠臂屈伸',sets:3,reps:'力竭',weight:''},
+    {name:'龙门架夹胸',sets:3,reps:'12-15次',weight:''},
+  ],
+  back:[
+    {name:'引体向上',sets:4,reps:'8-10次',weight:''},
+    {name:'杠铃划船',sets:4,reps:'8-10次',weight:''},
+    {name:'高位下拉',sets:3,reps:'10-12次',weight:''},
+    {name:'坐姿划船',sets:3,reps:'10-12次',weight:''},
+    {name:'直臂下压',sets:3,reps:'12-15次',weight:''},
+  ],
+  legs:[
+    {name:'杠铃深蹲',sets:4,reps:'8-10次',weight:''},
+    {name:'腿举',sets:3,reps:'10-12次',weight:''},
+    {name:'罗马尼亚硬拉',sets:3,reps:'10-12次',weight:''},
+    {name:'腿弯举',sets:3,reps:'12-15次',weight:''},
+    {name:'提踵',sets:4,reps:'15-20次',weight:''},
+  ],
+  shoulders:[
+    {name:'杠铃推举',sets:4,reps:'8-10次',weight:''},
+    {name:'哑铃侧平举',sets:3,reps:'12-15次',weight:''},
+    {name:'面拉',sets:3,reps:'12-15次',weight:''},
+    {name:'哑铃前平举',sets:3,reps:'12-15次',weight:''},
+  ],
+  arms:[
+    {name:'杠铃弯举',sets:3,reps:'10-12次',weight:''},
+    {name:'锤式弯举',sets:3,reps:'10-12次',weight:''},
+    {name:'绳索下压',sets:3,reps:'12-15次',weight:''},
+    {name:'窄距卧推',sets:3,reps:'8-10次',weight:''},
+  ],
+  core:[
+    {name:'平板支撑',sets:3,reps:'45秒',weight:''},
+    {name:'卷腹',sets:3,reps:'15-20次',weight:''},
+    {name:'悬垂举腿',sets:3,reps:'10-12次',weight:''},
+    {name:'俄罗斯转体',sets:3,reps:'20次',weight:''},
+  ],
+  cardio:[
+    {name:'跑步机',sets:1,reps:'20-30分钟',weight:''},
+    {name:'椭圆机',sets:1,reps:'15-20分钟',weight:''},
+    {name:'划船机',sets:1,reps:'10-15分钟',weight:''},
+    {name:'动感单车',sets:1,reps:'15-20分钟',weight:''},
+  ],
+  fullbody:[
+    {name:'杠铃深蹲',sets:3,reps:'8-10次',weight:''},
+    {name:'杠铃卧推',sets:3,reps:'8-10次',weight:''},
+    {name:'引体向上',sets:3,reps:'8-10次',weight:''},
+    {name:'杠铃推举',sets:3,reps:'8-10次',weight:''},
+    {name:'杠铃划船',sets:3,reps:'8-10次',weight:''},
+    {name:'罗马尼亚硬拉',sets:3,reps:'8-10次',weight:''},
+  ]
+};
+
+function loadData(){try{return JSON.parse(localStorage.getItem('fitness')||'{}')}catch(e){return{}}}
+function saveData(d){localStorage.setItem('fitness',JSON.stringify(d))}
+function today(){return new Date().toISOString().split('T')[0]}
+
+let D = loadData();
+D.exercises = D.exercises || {}; // {date: [{name,sets,reps,weight,done}]}
+D.meals = D.meals || {};        // {date: {breakfast:[],lunch:[],dinner:[],snack:[]}}
+D.body = D.body || [];          // [{date,weight,fat}]
+D._dietDate = today();
+
+// ═══════════════════ TABS ═══════════════════
+function switchTab(t){
+  document.querySelectorAll('.tab').forEach(e=>e.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+  document.querySelectorAll('nav button').forEach(e=>e.classList.remove('active'));
+  document.getElementById('nav-'+t).classList.add('active');
+  if(t==='workout'){renderWorkout();renderWeek()}
+  if(t==='diet'){renderDiet()}
+  if(t==='body'){renderBody()}
+}
+
+// ═══════════════════ WORKOUT ═══════════════════
+function loadTemplate(){
+  const t=document.getElementById('templateSelect').value;
+  if(!t)return;
+  const exs=TEMPLATES[t].map(e=>({...e,done:false}));
+  D.exercises[today()]=exs;
+  saveData(D);
+  renderWorkout();
+}
+
+function renderWorkout(){
+  const exs=D.exercises[today()]||[];
+  let h=exs.length?exs.map((e,i)=>`
+    <div class="ex-row">
+      <div class="ex-check${e.done?' done':''}" onclick="toggleEx(${i})">${e.done?'✓':''}</div>
+      <div class="ex-name" style="${e.done?'text-decoration:line-through;color:var(--text3)':''}">${e.name}</div>
+      <div class="ex-detail">${e.sets}×${e.reps}${e.weight?' '+e.weight:''}</div>
+      <button class="btn-small btn-danger" onclick="deleteEx(${i})" style="font-size:10px">✕</button>
+    </div>
+  `).join(''):'<p style="text-align:center;color:var(--text3);padding:20px">选择训练模板或添加动作</p>';
+  document.getElementById('exerciseList').innerHTML=h;
+  const done=exs.filter(e=>e.done).length;
+  document.getElementById('templateSelect').value='';
+}
+
+function toggleEx(i){
+  const exs=D.exercises[today()]||[];
+  if(exs[i]){exs[i].done=!exs[i].done;D.exercises[today()]=exs;saveData(D);renderWorkout();renderWeek()}
+}
+function deleteEx(i){
+  const exs=D.exercises[today()]||[];
+  exs.splice(i,1);D.exercises[today()]=exs;saveData(D);renderWorkout();renderWeek()
+}
+function addExercise(){
+  const n=document.getElementById('exName').value.trim();
+  const s=parseInt(document.getElementById('exSets').value)||3;
+  const r=document.getElementById('exReps').value.trim();
+  const w=document.getElementById('exWeight').value.trim();
+  if(!n||!r)return toast('请填写动作名称和次数');
+  const exs=D.exercises[today()]||[];
+  exs.push({name:n,sets:s,reps:r,weight:w,done:false});
+  D.exercises[today()]=exs;saveData(D);
+  hideModal('addExerciseModal');renderWorkout();renderWeek();
+  toast('已添加');
+}
+
+function renderWeek(){
+  const days=[];
+  for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days.push(d.toISOString().split('T')[0])}
+  const labels=['周日','周一','周二','周三','周四','周五','周六'];
+  let h=days.map((d,i)=>{const dd=new Date(d);return `<button class="day-tab${d===today()?' active':''}" onclick="D._dietDate='${d}';renderWeek()">${labels[dd.getDay()]}\n${d.slice(5)}</button>`}).join('');
+  document.getElementById('weekDays').innerHTML=h;
+  const sel=D._dietDate||today();
+  const exs=D.exercises[sel]||[];
+  const total=exs.length;
+  const done=exs.filter(e=>e.done).length;
+  document.getElementById('weekLog').innerHTML=`
+    <div style="display:flex;align-items:center;gap:10px;margin-top:8px">
+      <div style="flex:1;height:6px;background:var(--border);border-radius:3px">
+        <div style="width:${total?done/total*100:0}%;height:100%;background:var(--green);border-radius:3px;transition:.3s"></div>
+      </div>
+      <span style="font-size:12px;color:var(--text2)">${done}/${total}</span>
+    </div>
+    <p style="font-size:11px;color:var(--text3);margin-top:6px">${total?exs.filter(e=>e.done).map(e=>'✓ '+e.name).join(', ')||'暂无完成':'当天无训练记录'}</p>`;
+}
+
+// ═══════════════════ TIMER ═══════════════════
+let timerRunning=false,timerInterval=null,timerState='work',timerSet=1,timerSeconds=0;
+let timerWork=30,timerRest=15,timerRounds=3;
+function resetTimer(){
+  clearInterval(timerInterval);timerRunning=false;
+  timerWork=parseInt(document.getElementById('setWork').value)||30;
+  timerRest=parseInt(document.getElementById('setRest').value)||15;
+  timerRounds=parseInt(document.getElementById('setRounds').value)||3;
+  timerState='work';timerSet=1;timerSeconds=timerWork;
+  updateTimerDisplay();
+  document.getElementById('btnTimerStart').textContent='▶ 开始';
+  document.getElementById('timerCircle').classList.remove('rest');
+}
+function startTimer(){
+  if(timerRunning){clearInterval(timerInterval);timerRunning=false;document.getElementById('btnTimerStart').textContent='▶ 继续';return}
+  timerWork=parseInt(document.getElementById('setWork').value)||30;
+  timerRest=parseInt(document.getElementById('setRest').value)||15;
+  timerRounds=parseInt(document.getElementById('setRounds').value)||3;
+  if(timerSeconds===0){timerSeconds=timerWork}
+  timerRunning=true;document.getElementById('btnTimerStart').textContent='⏸ 暂停';
+  timerInterval=setInterval(()=>{
+    timerSeconds--;
+    updateTimerDisplay();
+    if(timerSeconds<=0){
+      beep();
+      if(timerState==='work'){
+        timerState='rest';timerSeconds=timerRest;
+        document.getElementById('timerCircle').classList.add('rest');
+      }else{
+        timerState='work';timerSet++;timerSeconds=timerWork;
+        document.getElementById('timerCircle').classList.remove('rest');
+      }
+      if(timerSet>timerRounds){clearInterval(timerInterval);timerRunning=false;timerState='work';timerSet=1;timerSeconds=timerWork;document.getElementById('timerCircle').classList.remove('rest');document.getElementById('btnTimerStart').textContent='▶ 开始';toast('🎉 训练完成！');beep();beep()}
+      updateTimerDisplay();
+    }
+  },1000);
+  updateTimerDisplay();
+}
+function updateTimerDisplay(){
+  const m=Math.floor(timerSeconds/60),s=timerSeconds%60;
+  document.getElementById('timerDisplay').textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  document.getElementById('timerLabel').textContent=timerState==='work'?'运动中':'休息中';
+  document.getElementById('timerSet').textContent=timerSet;document.getElementById('timerTotal').textContent=timerRounds;
+}
+function beep(){
+  try{const a=new AudioContext();const o=a.createOscillator();const g=a.createGain();o.connect(g);g.connect(a.destination);o.frequency.value=800;g.gain.value=0.3;o.start();o.stop(a.currentTime+0.15)}catch(e){}
+}
+
+// ═══════════════════ DIET ═══════════════════
+function renderDiet(){
+  const dd=D._dietDate||today();
+  const days=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days.push(d.toISOString().split('T')[0])}
+  const labels=['日','一','二','三','四','五','六'];
+  document.getElementById('dietDayTabs').innerHTML=days.map((d,i)=>{const dd=new Date(d);return `<button class="day-tab${d===dd?' active':''}" onclick="D._dietDate='${d}';renderDiet()">周${labels[dd.getDay()]}\n${d.slice(5)}</button>`}).join('');
+  const meals=D.meals[dd]||{breakfast:[],lunch:[],dinner:[],snack:[]};
+  ['breakfast','lunch','dinner','snack'].forEach(t=>{
+    const m=meals[t]||[];
+    document.getElementById(t+'List').innerHTML=m.length?m.map((f,i)=>`
+      <div class="meal-row"><div class="food">${f.name} ${f.amount||''}</div><div class="kcal">${f.kcal}kcal</div><button class="btn-small btn-danger" onclick="deleteMeal('${t}',${i})" style="font-size:10px;padding:2px 6px">✕</button></div>
+    `).join(''):'<p style="color:var(--text3);font-size:12px">暂无记录</p>';
+  });
+  let total=0;Object.values(meals).forEach(arr=>arr.forEach(f=>total+=f.kcal||0));
+  document.getElementById('dietTotal').textContent=total+' kcal';
+}
+function addMeal(){
+  const t=document.getElementById('mealType').value;
+  const n=document.getElementById('foodName').value.trim();
+  const a=document.getElementById('foodAmount').value.trim();
+  const k=parseInt(document.getElementById('foodKcal').value)||0;
+  if(!n)return toast('请输入食物名称');
+  const dd=D._dietDate||today();
+  D.meals[dd]=D.meals[dd]||{breakfast:[],lunch:[],dinner:[],snack:[]};
+  D.meals[dd][t].push({name:n,amount:a,kcal:k,protein:parseInt(document.getElementById('foodProtein').value)||0});
+  saveData(D);hideModal('addMealModal');renderDiet();toast('已记录');
+}
+function deleteMeal(type,i){
+  const dd=D._dietDate||today();
+  if(D.meals[dd]&&D.meals[dd][type]){D.meals[dd][type].splice(i,1);saveData(D);renderDiet()}
+}
+
+// ═══════════════════ BODY ═══════════════════
+function saveBodyData(){
+  const w=parseFloat(document.getElementById('bodyWeight').value);
+  const f=parseFloat(document.getElementById('bodyFat').value);
+  if(!w&&!f)return toast('请至少填写一项');
+  D.body.push({date:today(),weight:w||null,fat:f||null});
+  D.body=D.body.filter(b=>b.weight||b.fat).slice(-90);
+  saveData(D);renderBody();toast('已保存');
+}
+function renderBody(){
+  const recent=D.body.slice(-7);
+  let h='';const maxW=Math.max(...recent.map(b=>b.weight||0),1);
+  recent.forEach(b=>{const p=b.weight?b.weight/maxW*100:0;h+=`<div class="chart-col"><div class="chart-fill" style="height:${p}%"></div><div class="chart-val">${b.weight||''}</div><div class="chart-date">${b.date.slice(5)}</div></div>`});
+  document.getElementById('weightChart').innerHTML=h||'<p style="color:var(--text3);font-size:12px">暂无数据</p>';
+  document.getElementById('bodyHistory').innerHTML=D.body.slice().reverse().slice(0,10).map(b=>`
+    <div class="card-row" style="justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);font-size:12px">
+      <span>${b.date}</span><span>${b.weight?b.weight+'kg':'-'}</span><span>${b.fat?b.fat+'%':'-'}</span>
+    </div>
+  `).join('');
+}
+
+// ═══════════════════ MODAL ═══════════════════
+function showModal(id){document.getElementById(id).classList.add('show')}
+function hideModal(id){document.getElementById(id).classList.remove('show')}
+
+// ═══════════════════ EXPORT/IMPORT ═══════════════════
+function exportData(){
+  const blob=new Blob([JSON.stringify(D,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='fitness-data.json';a.click();toast('已导出')
+}
+function importData(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();r.onload=function(){
+    try{const d=JSON.parse(r.result);D={...D,...d};saveData(D);toast('已导入');renderWorkout();renderWeek();renderDiet();renderBody()}catch(e){toast('文件格式错误')}
+  };r.readAsText(f);e.target.value='';
+}
+
+// ═══════════════════ TOAST ═══════════════════
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2000)}
+
+// ═══════════════════ INIT ═══════════════════
+D._dietDate=today();
+renderWorkout();renderWeek();renderDiet();renderBody();
+resetTimer();
+</script>
+</body>
+</html>
