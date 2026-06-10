@@ -304,7 +304,7 @@ document.getElementById('quizForm').addEventListener('submit',function(e){
   document.getElementById('resultArea').scrollIntoView({behavior:'smooth'});
 
   // Feishu notification
-  const feishu='https://open.feishu.cn/open-apis/bot/v2/hook/e70726df-e73b-4e4b-a66a-6db1cc04683d';
+  const feishu='https://open.feishu.cn/open-apis/bot/v2/hook/0ea0de55-c726-4cf0-9be6-c3bcd7a8cde5';
   fetch(feishu,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
     msg_type:'interactive',card:{header:{title:{tag:'plain_text',content:'新测评结果'},template:'blue'},
     elements:[{tag:'div',text:{tag:'lark_md',content:'**'+document.getElementById('name').value+'** | '+document.getElementById('position').value+'\n---\n红色·新鲜：**'+red+'**/15\n蓝色·理性：**'+blue+'**/15\n黄色·执行：**'+yellow+'**/15\n绿色·享乐：**'+green+'**/15\n\n'+(red<5||green>10?'**需要重点关注！**':'结果正常')}}]
