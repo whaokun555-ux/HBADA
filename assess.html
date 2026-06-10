@@ -261,11 +261,17 @@ input:focus,select:focus{border-color:var(--accent)}
 document.getElementById('quizForm').addEventListener('submit',function(e){
   e.preventDefault();
   // Check all answered
-  for(let i=0;i<30;i++){
+  var firstEmpty=-1;
+  for(var i=0;i<30;i++){
     if(!this.querySelector('input[name="q'+i+'"]:checked')){
-      toast('请完成全部30道题后再提交');
-      return;
+      firstEmpty=i;break;
     }
+  }
+  if(firstEmpty>=0){
+    toast('还有题目没答完！请检查第'+(firstEmpty+1)+'题');
+    this.querySelector('input[name="q'+firstEmpty+'"]').closest('.q-item').scrollIntoView({behavior:'smooth',block:'center'});
+    this.querySelector('input[name="q'+firstEmpty+'"]').closest('.q-item').style.background='#fff3cd';
+    return;
   }
   // Collect answers (already stored as 1/2/3/4 values)
   const a=[];
