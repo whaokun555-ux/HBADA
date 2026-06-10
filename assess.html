@@ -289,8 +289,8 @@ document.getElementById('quizForm').addEventListener('submit',function(e){
 
   // Feishu notification
   const feishu='https://open.feishu.cn/open-apis/bot/v2/hook/0ea0de55-c726-4cf0-9be6-c3bcd7a8cde5';
-  var name=document.getElementById('name').value,pos=document.getElementById('position').value;
-  var text='测评：'+name+' | '+pos+'\n红色·新鲜：'+red+'/15 | 蓝色·理性：'+blue+'/15 | 黄色·执行：'+yellow+'/15 | 绿色·享乐：'+green+'/15\n'+(red<5||green>10?'需要重点关注！':'结果正常');
+  var name=document.getElementById('name').value,pos=document.getElementById('position').value,gender=document.getElementById('gender').value,ht=document.getElementById('hometown').value,bd=document.getElementById('birthday').value,ph=document.getElementById('phone').value;
+  var text='测评：'+name+'\n岗位：'+pos+'\n性别：'+gender+' | 籍贯：'+ht+'\n出生日期：'+bd+'\n手机：'+ph+'\n---\n红色·新鲜：'+red+'/15 | 蓝色·理性：'+blue+'/15\n黄色·执行：'+yellow+'/15 | 绿色·享乐：'+green+'/15\n'+(red<5||green>10?'需要重点关注！':'结果正常');
   fetch(feishu,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({msg_type:'text',content:{text:text}})}).catch(function(){});
 });
 function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('show')},2000)}
