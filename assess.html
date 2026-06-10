@@ -279,29 +279,13 @@ document.getElementById('quizForm').addEventListener('submit',function(e){
   const yellow=cn(a.slice(0,15),3)+cn(a.slice(15),2);
   const green=cn(a.slice(0,15),4)+cn(a.slice(15),1);
 
-  // Show result
+  // Candidate only sees thank you; results go to HR via Feishu
   document.getElementById('quizForm').style.display='none';
   document.getElementById('resultArea').style.display='block';
-  document.getElementById('resultName').innerHTML='<b>'+document.getElementById('name').value+'</b> | '+document.getElementById('position').value;
-
-  const dims=[
-    {n:'红色·新鲜',s:red,c:'dim-red',d:'追求刺激、变化、新鲜感。喜欢尝试新事物，敢于冒险。'},
-    {n:'蓝色·理性',s:blue,c:'dim-blue',d:'注重逻辑、分析、精确。做事谨慎，喜欢计划和规则。'},
-    {n:'黄色·执行',s:yellow,c:'dim-yellow',d:'目标导向、行动力强。喜欢主导，追求结果和成就。'},
-    {n:'绿色·享乐',s:green,c:'dim-green',d:'重视和谐、稳定、舒适。为人温和，避免冲突，享受当下。'}
-  ];
-  const mx=Math.max(red,blue,yellow,green);
-  const top=dims.filter(d=>d.s===mx);
-  document.getElementById('dimGrid').innerHTML=dims.map(d=>'<div class="dim-card '+d.c+'"><div class="score">'+d.s+'</div><div class="label">'+d.n+'</div><div style="font-size:10px;color:var(--text2)">/15</div></div>').join('');
-  document.getElementById('resultInterpret').innerHTML='<b>主导特质：'+top.map(d=>d.n).join('、')+'</b><br>'+top[0].d+(top.length>1?'<br>'+top[1].d:'');
-
-  // Warning
-  if(red<5||green>10){
-    const w=document.getElementById('warning');w.style.display='block';
-    w.innerHTML='<b>需要重点关注！</b>'+(red<5?' 红色（新鲜）维度得分低于5，该候选人可能缺乏主动性和创新意愿。':'')+(green>10?' 绿色（享乐）维度得分高于10，该候选人可能过于追求舒适安逸。':'');
-  }
-
-  document.getElementById('resultArea').scrollIntoView({behavior:'smooth'});
+  document.getElementById('resultName').innerHTML='<b>提交成功！</b> 感谢'+document.getElementById('name').value+'的参与';
+  document.getElementById('dimGrid').innerHTML='';
+  document.getElementById('resultInterpret').innerHTML='测评结果已自动发送至HR，我们会尽快与您联系。';
+  document.getElementById('warning').style.display='none';
 
   // Feishu notification
   const feishu='https://open.feishu.cn/open-apis/bot/v2/hook/0ea0de55-c726-4cf0-9be6-c3bcd7a8cde5';
