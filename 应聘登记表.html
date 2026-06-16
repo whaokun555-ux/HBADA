@@ -473,7 +473,6 @@ document.getElementById('applicationForm').addEventListener('submit', function(e
   
   showToast('正在提交...');
 
-  // 自定义机器人只支持text，不支持interactive卡片
   var text='📋 新应聘登记表\n';
   text+='━━━━━━━━━━━━\n';
   text+='姓名：'+data.name+'\n';
@@ -487,7 +486,6 @@ document.getElementById('applicationForm').addEventListener('submit', function(e
     msg_type: 'text',
     content: { text: text }
   };
-
   var self=this;
   fetch(FEISHU_URL, {
     method: 'POST',
@@ -507,6 +505,8 @@ document.getElementById('applicationForm').addEventListener('submit', function(e
   }).catch(function(e){
     showToast('❌ 网络错误：' + e.message, 'error');
   });
+});
+
 function showToast(msg, type) {
   const t = document.getElementById('toast');
   t.textContent = msg;
