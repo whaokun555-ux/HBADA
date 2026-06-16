@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>飞书测试</title></head>
+<body>
+<h2>飞书 Webhook 连通性测试</h2>
+<button onclick="test1()">测试1: fetch + text</button>
+<button onclick="test2()">测试2: fetch + JSON</button>
+<p id="result"></p>
+<script>
+const HOOK='https://open.feishu.cn/open-apis/bot/v2/hook/7dfe77c9-e382-490d-babc-1a987f5d6aa6';
+function r(t){document.getElementById('result').textContent=t}
+
+function test1(){
+  r('发送中...');
+  fetch(HOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({msg_type:'text',content:{text:'【测试1】fetch直接发送 - 浏览器端'}})})
+  .then(x=>x.json()).then(x=>{r('结果: code='+x.code+' msg='+x.msg); if(x.code===0)alert('✅ 成功，请检查飞书群')}).catch(e=>r('错误: '+e.message))
+}
+
+function test2(){
+  r('发送中...');
+  var d=new FormData();d.append('name','测试员');d.append('phone','13800138000');d.append('position','测试岗位');
+  var o={}; d.forEach((v,k)=>{o[k]=v});
+  var fields=''; for(var k in o) fields+=k+': '+o[k]+'\n';
+  var text='📋 模拟表单提交\n---\n'+fields+'\n提交时间：'+new Date().toLocaleString('zh-CN');
+  fetch(HOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({msg_type:'text',content:{text:text}})})
+  .then(x=>x.json()).then(x=>{r('结果: code='+x.code+' msg='+x.msg); if(x.code===0)alert('✅ 成功，请检查飞书群')}).catch(e=>r('错误: '+e.message))
+}
+</script>
+</body></html>
