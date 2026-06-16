@@ -258,6 +258,31 @@ input:focus,select:focus{border-color:var(--accent)}
 </main>
 
 <script>
+// HR 映射（UUID 拆分存储，运行时拼接完整地址）
+const _k='aHR0cHM6Ly9vcGVuLmZlaXNodS5jbi9vcGVuLWFwaXMvYm90L3YyL2hvb2sv';
+const _m={
+  '白听白':'ZGQ5YmJmZWYtYWUwMS00MmMzLWEyYTgtM2E2YjIzMzdhNTA1',
+  '黑墨沉香':'MGVhMGRlNTUtYzcyNi00Y2YwLTliZTYtYzNiY2Q3YThjZGU1',
+  '白桃乌龙':'ZTExZTU4OGEtNGZmYi00YmEzLWFlZjYtZDFjOWVhNGFkOTgz',
+  '黑葫乐':'ZDU2M2I4MDQtMjM3Mi00MDcyLThiZGItY2NkNDc5ZmYwMTU3',
+  '白望舟':'N2IzZTVjODctMTZmMy00OWRhLTlkNzgtOTJkZTg4Mzk5ZDY1',
+  '白诗文':'ZGY0NjExOGQtYmE4OC00ODEwLTk0ODktYTFjNDc2MTY1ZGY5',
+  '白一千':'ZjM5Y2UyY2QtNWNmZi00ZDg5LTgxNGYtZjU2ZTVjNjM4NTUz',
+  '白筱俪':'MjQ3MjIzMzYtZjkxNC00NjY0LWI5MmItNzBjYTkxM2VhMjgz',
+  '黑白明辉':'Y2YxZGUzOWMtMDczMC00YzMzLWEwMjAtYzRhMjY0NDY3MmU3',
+  '黑轮':'MmQ1MTg2MGMtOWY3MS00MGJkLTg1Y2YtMTlmYzFlMTQxZDI2',
+  '白艾米':'ZTcyNmVmMWQtMzNiZC00ZjljLWIzNzctNjU2NDllZjFlYWU1'
+};
+function _g(n){return atob(_k)+atob(_m[n])}
+const urlParams=new URLSearchParams(window.location.search);
+const hrName=urlParams.get('hr')||'';
+const feishu=hrName? _g(hrName) : '';
+
+// Show HR name on page
+if(hrName){
+  document.write('<div id="hrBadge" style="position:fixed;bottom:12px;right:12px;background:#2c3e6b;color:#fff;padding:6px 14px;border-radius:20px;font-size:11px;z-index:99;opacity:.7">HR：'+hrName+'</div>');
+}
+
 document.getElementById('quizForm').addEventListener('submit',function(e){
   e.preventDefault();
   // Check all answered
@@ -294,10 +319,11 @@ document.getElementById('quizForm').addEventListener('submit',function(e){
   document.getElementById('warning').style.display='none';
 
   // Feishu notification
-  const feishu='https://open.feishu.cn/open-apis/bot/v2/hook/0ea0de55-c726-4cf0-9be6-c3bcd7a8cde5';
+  if(!feishu){toast('链接异常，请联系HR重新获取测评链接');return;}
   var name=document.getElementById('name').value,pos=document.getElementById('position').value,gender=document.getElementById('gender').value,ht=document.getElementById('hometown').value,bd=document.getElementById('birthday').value,ph=document.getElementById('phone').value;
-  var text='测评：'+name+'\n岗位：'+pos+'\n性别：'+gender+' | 籍贯：'+ht+'\n出生日期：'+bd+'\n手机：'+ph+'\n---\n红色·新鲜：'+red+'/15 | 蓝色·理性：'+blue+'/15\n黄色·执行：'+yellow+'/15 | 绿色·享乐：'+green+'/15\n'+(red<5||green>10?'需要重点关注！':'结果正常');
-  fetch(feishu,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({msg_type:'text',content:{text:text}})}).catch(function(){});
+  var text='测评：'+name+'\n岗位：'+pos+'\n性别：'+gender+' | 籍贯：'+ht+'\n出生日期：'+bd+'\n手机：'+ph+'\n归属HR：'+hrName+'\n---\n新鲜：'+red+' | 理性：'+blue+'\n执行：'+yellow+' | 享乐：'+green+'\n'+(yellow<5||green>10?'需要重点关注！':'结果正常');
+  var blob=new Blob([JSON.stringify({msg_type:'text',content:{text:text}})],{type:'application/json'});
+  navigator.sendBeacon(feishu,blob);
 });
 function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('show')},2000)}
 </script>
