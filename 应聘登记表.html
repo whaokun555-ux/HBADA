@@ -381,7 +381,7 @@
 // ═══════════════════════════════════════════
 // 飞书 Webhook
 // ═══════════════════════════════════════════
-const FEISHU_URL = 'https://open.feishu.cn/open-apis/bot/v2/hook/e70726df-e73b-4e4b-a66a-6db1cc04683d';
+const FEISHU_URL = 'https://open.feishu.cn/open-apis/bot/v2/hook/7dfe77c9-e382-490d-babc-1a987f5d6aa6';
 
 // ═══════════════════════════════════════════
 // 岗位偏好：至少选一项
@@ -472,50 +472,39 @@ document.getElementById('applicationForm').addEventListener('submit', function(e
 
   showToast('正在提交...');
 
-  fetch(FEISHU_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      msg_type: 'interactive',
-      card: {
-        header: {
-          title: { tag: 'plain_text', content: '📋 新应聘登记表' },
-          template: 'blue'
-        },
-        elements: [
-          {
-            tag: 'div',
-            text: {
-              tag: 'lark_md',
-              content: `**${data.name || '未填'}** | ${data.position || '未知岗位'} | ${data.phone || ''}\n---\n${fields}`
-            }
-          },
-          {
-            tag: 'note',
-            elements: [
-              { tag: 'plain_text', content: '提交时间：' + new Date().toLocaleString('zh-CN') }
-            ]
+  showToast('正在提交...');
+  var payload=JSON.stringify({
+    msg_type: 'interactive',
+    card: {
+      header: {
+        title: { tag: 'plain_text', content: '📋 新应聘登记表' },
+        template: 'blue'
+      },
+      elements: [
+        {
+          tag: 'div',
+          text: {
+            tag: 'lark_md',
+            content: `**${data.name || '未填'}** | ${data.position || '未知岗位'} | ${data.phone || ''}\n---\n${fields}`
           }
-        ]
-      }
-    })
-  }).then(r => r.json()).then(r => {
-    if (r.code === 0) {
-      showToast('✅ 提交成功！感谢您的填写');
-      this.reset();
-      // 重置日期为今天
-      const now = new Date();
-      const today = now.toISOString().split('T')[0];
-      this.querySelectorAll('input[type="date"]').forEach(el => el.value = today);
-      document.getElementById('medicalNote').classList.remove('show');
-    } else {
-      showToast('提交失败，请稍后重试', 'error');
-      console.error(r);
+        },
+        {
+          tag: 'note',
+          elements: [
+            { tag: 'plain_text', content: '提交时间：' + new Date().toLocaleString('zh-CN') }
+          ]
+        }
+      ]
     }
-  }).catch(e => {
-    showToast('网络错误，请稍后重试', 'error');
-    console.error(e);
   });
+  var blob=new Blob([payload],{type:'application/json'});
+  navigator.sendBeacon(FEISHU_URL,blob);
+  showToast('✅ 提交成功！感谢您的填写');
+  this.reset();
+  var now=new Date();
+  var today=now.toISOString().split('T')[0];
+  this.querySelectorAll('input[type="date"]').forEach(function(el){el.value=today});
+  document.getElementById('medicalNote').classList.remove('show');
 });
 
 function showToast(msg, type) {
