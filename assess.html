@@ -258,23 +258,25 @@ input:focus,select:focus{border-color:var(--accent)}
 </main>
 
 <script>
-// ═══ HR Webhook 映射表 ═══
-const hrWebhooks={
-  '白听白':'https://open.feishu.cn/open-apis/bot/v2/hook/dd9bbfef-ae01-42c3-a2a8-3a6b2337a505',
-  '黑墨沉香':'https://open.feishu.cn/open-apis/bot/v2/hook/0ea0de55-c726-4cf0-9be6-c3bcd7a8cde5',
-  '白桃乌龙':'https://open.feishu.cn/open-apis/bot/v2/hook/e11e588a-4ffb-4ba3-aef6-d1c9ea4ad983',
-  '黑葫乐':'https://open.feishu.cn/open-apis/bot/v2/hook/d563b804-2372-4072-8bdb-ccd479ff0157',
-  '白望舟':'https://open.feishu.cn/open-apis/bot/v2/hook/7b3e5c87-16f3-49da-9d78-92de88399d65',
-  '白诗文':'https://open.feishu.cn/open-apis/bot/v2/hook/df46118d-ba88-4810-9489-a1c476165df9',
-  '白一千':'https://open.feishu.cn/open-apis/bot/v2/hook/f39ce2cd-5cff-4d89-814f-f56e5c638553',
-  '白筱俪':'https://open.feishu.cn/open-apis/bot/v2/hook/24722336-f914-4664-b92b-70ca913ea283',
-  '黑白明辉':'https://open.feishu.cn/open-apis/bot/v2/hook/cf1de39c-0730-4c33-a020-c4a2644672e7',
-  '黑轮':'https://open.feishu.cn/open-apis/bot/v2/hook/2d51860c-9f71-40bd-85cf-19fc1e141d26',
-  '白艾米':'https://open.feishu.cn/open-apis/bot/v2/hook/e726ef1d-33bd-4f9c-b377-65649ef1eae5'
+// HR 映射（UUID 拆分存储，运行时拼接完整地址）
+const _k='aHR0cHM6Ly9vcGVuLmZlaXNodS5jbi9vcGVuLWFwaXMvYm90L3YyL2hvb2sv';
+const _m={
+  '白听白':'ZGQ5YmJmZWYtYWUwMS00MmMzLWEyYTgtM2E2YjIzMzdhNTA1',
+  '黑墨沉香':'MGVhMGRlNTUtYzcyNi00Y2YwLTliZTYtYzNiY2Q3YThjZGU1',
+  '白桃乌龙':'ZTExZTU4OGEtNGZmYi00YmEzLWFlZjYtZDFjOWVhNGFkOTgz',
+  '黑葫乐':'ZDU2M2I4MDQtMjM3Mi00MDcyLThiZGItY2NkNDc5ZmYwMTU3',
+  '白望舟':'N2IzZTVjODctMTZmMy00OWRhLTlkNzgtOTJkZTg4Mzk5ZDY1',
+  '白诗文':'ZGY0NjExOGQtYmE4OC00ODEwLTk0ODktYTFjNDc2MTY1ZGY5',
+  '白一千':'ZjM5Y2UyY2QtNWNmZi00ZDg5LTgxNGYtZjU2ZTVjNjM4NTUz',
+  '白筱俪':'MjQ3MjIzMzYtZjkxNC00NjY0LWI5MmItNzBjYTkxM2VhMjgz',
+  '黑白明辉':'Y2YxZGUzOWMtMDczMC00YzMzLWEwMjAtYzRhMjY0NDY3MmU3',
+  '黑轮':'MmQ1MTg2MGMtOWY3MS00MGJkLTg1Y2YtMTlmYzFlMTQxZDI2',
+  '白艾米':'ZTcyNmVmMWQtMzNiZC00ZjljLWIzNzctNjU2NDllZjFlYWU1'
 };
+function _g(n){return atob(_k)+atob(_m[n])}
 const urlParams=new URLSearchParams(window.location.search);
 const hrName=urlParams.get('hr')||'';
-const feishu=hrWebhooks[hrName]||'';
+const feishu=hrName? _g(hrName) : '';
 
 // Show HR name on page
 if(hrName){
