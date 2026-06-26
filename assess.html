@@ -258,7 +258,12 @@ input:focus,select:focus{border-color:var(--accent)}
 </main>
 
 <script>
-// HR 映射（UUID 拆分存储，运行时拼接完整地址）
+	// HR 短码 → 全名映射
+	const _alias={
+	  'btb':'白听白','hmcx':'黑墨沉香','btwl':'白桃乌龙','hhl':'黑葫乐',
+	  'hyr':'黑一然','bsw':'白诗文','byq':'白一千','bxl':'白筱俪',
+	  'hbmh':'黑白明辉','hl':'黑轮','bam':'白艾米'
+	};
 const _k='aHR0cHM6Ly9vcGVuLmZlaXNodS5jbi9vcGVuLWFwaXMvYm90L3YyL2hvb2sv';
 const _m={
   '白听白':'ZGQ5YmJmZWYtYWUwMS00MmMzLWEyYTgtM2E2YjIzMzdhNTA1',
@@ -275,7 +280,8 @@ const _m={
 };
 function _g(n){return atob(_k)+atob(_m[n])}
 const urlParams=new URLSearchParams(window.location.search);
-const hrName=urlParams.get('hr')||'';
+const rawHr=urlParams.get('hr')||'';
+	const hrName=_alias[rawHr]||rawHr;
 const feishu=hrName? _g(hrName) : '';
 
 // Show HR name on page
