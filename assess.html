@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -258,20 +258,19 @@ input:focus,select:focus{border-color:var(--accent)}
 </main>
 
 <script>
-// HR 短码 → 全名映射
-const _alias={
-  'btb':'白听白','hmcx':'黑墨沉香','btwl':'白桃乌龙','hhl':'黑葫乐',
-  'bwz':'白望舟','bsw':'白诗文','byq':'白一千','bxl':'白筱俪',
-  'hbmh':'黑白明辉','hl':'黑轮','bam':'白艾米'
-};
-// UUID 映射
+	// HR 短码 → 全名映射
+	const _alias={
+	  'btb':'白听白','hmcx':'黑墨沉香','btwl':'白桃乌龙','hhl':'黑葫乐',
+	  'hyr':'黑一然','bsw':'白诗文','byq':'白一千','bxl':'白筱俪',
+	  'hbmh':'黑白明辉','hl':'黑轮','bam':'白艾米'
+	};
 const _k='aHR0cHM6Ly9vcGVuLmZlaXNodS5jbi9vcGVuLWFwaXMvYm90L3YyL2hvb2sv';
 const _m={
   '白听白':'ZGQ5YmJmZWYtYWUwMS00MmMzLWEyYTgtM2E2YjIzMzdhNTA1',
   '黑墨沉香':'MGVhMGRlNTUtYzcyNi00Y2YwLTliZTYtYzNiY2Q3YThjZGU1',
   '白桃乌龙':'ZTExZTU4OGEtNGZmYi00YmEzLWFlZjYtZDFjOWVhNGFkOTgz',
   '黑葫乐':'ZDU2M2I4MDQtMjM3Mi00MDcyLThiZGItY2NkNDc5ZmYwMTU3',
-  '白望舟':'N2IzZTVjODctMTZmMy00OWRhLTlkNzgtOTJkZTg4Mzk5ZDY1',
+  '黑一然':'N2IzZTVjODctMTZmMy00OWRhLTlkNzgtOTJkZTg4Mzk5ZDY1',
   '白诗文':'ZGY0NjExOGQtYmE4OC00ODEwLTk0ODktYTFjNDc2MTY1ZGY5',
   '白一千':'ZjM5Y2UyY2QtNWNmZi00ZDg5LTgxNGYtZjU2ZTVjNjM4NTUz',
   '白筱俪':'MjQ3MjIzMzYtZjkxNC00NjY0LWI5MmItNzBjYTkxM2VhMjgz',
@@ -282,7 +281,7 @@ const _m={
 function _g(n){return atob(_k)+atob(_m[n])}
 const urlParams=new URLSearchParams(window.location.search);
 const rawHr=urlParams.get('hr')||'';
-const hrName=_alias[rawHr]||rawHr;
+	const hrName=_alias[rawHr]||rawHr;
 const feishu=hrName? _g(hrName) : '';
 
 // Show HR name on page
@@ -329,7 +328,8 @@ document.getElementById('quizForm').addEventListener('submit',function(e){
   if(!feishu){toast('链接异常，请联系HR重新获取测评链接');return;}
   var name=document.getElementById('name').value,pos=document.getElementById('position').value,gender=document.getElementById('gender').value,ht=document.getElementById('hometown').value,bd=document.getElementById('birthday').value,ph=document.getElementById('phone').value;
   var text='测评：'+name+'\n岗位：'+pos+'\n性别：'+gender+' | 籍贯：'+ht+'\n出生日期：'+bd+'\n手机：'+ph+'\n归属HR：'+hrName+'\n---\n新鲜：'+red+' | 理性：'+blue+'\n执行：'+yellow+' | 享乐：'+green+'\n'+(yellow<5||green>10?'需要重点关注！':'结果正常');
-  fetch(feishu,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({msg_type:'text',content:{text:text}})}).catch(function(){});
+  var blob=new Blob([JSON.stringify({msg_type:'text',content:{text:text}})],{type:'application/json'});
+  navigator.sendBeacon(feishu,blob);
 });
 function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('show')},2000)}
 </script>
