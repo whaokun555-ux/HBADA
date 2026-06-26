@@ -328,8 +328,7 @@ document.getElementById('quizForm').addEventListener('submit',function(e){
   if(!feishu){toast('链接异常，请联系HR重新获取测评链接');return;}
   var name=document.getElementById('name').value,pos=document.getElementById('position').value,gender=document.getElementById('gender').value,ht=document.getElementById('hometown').value,bd=document.getElementById('birthday').value,ph=document.getElementById('phone').value;
   var text='测评：'+name+'\n岗位：'+pos+'\n性别：'+gender+' | 籍贯：'+ht+'\n出生日期：'+bd+'\n手机：'+ph+'\n归属HR：'+hrName+'\n---\n新鲜：'+red+' | 理性：'+blue+'\n执行：'+yellow+' | 享乐：'+green+'\n'+(yellow<5||green>10?'需要重点关注！':'结果正常');
-  var blob=new Blob([JSON.stringify({msg_type:'text',content:{text:text}})],{type:'application/json'});
-  navigator.sendBeacon(feishu,blob);
+	  fetch(feishu,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({msg_type:'text',content:{text:text}})}).catch(function(){});
 });
 function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('show')},2000)}
 </script>
