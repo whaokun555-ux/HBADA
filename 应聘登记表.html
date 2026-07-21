@@ -386,25 +386,9 @@
 // ═══════════════════════════════════════════
 // 飞书 Webhook
 // ═══════════════════════════════════════════
-const _alias={
-  'btb':'白听白','hmcx':'黑墨沉香','btwl':'白桃乌龙','hhl':'黑葫乐',
-  'hyr':'黑一然','bsw':'白诗文','byq':'白一千','bxl':'白筱俪',
-  'hbmh':'黑白明辉','hl':'黑轮','bam':'白艾米'
-};
+const _alias={'1':'HR1','2':'HR2','3':'HR3','4':'HR4','5':'HR5','6':'HR6','7':'HR7','8':'HR8','9':'HR9','10':'HR10','11':'HR11'};
 const _k='aHR0cHM6Ly9vcGVuLmZlaXNodS5jbi9vcGVuLWFwaXMvYm90L3YyL2hvb2sv';
-const _m={
-  '白听白':'ZGQ5YmJmZWYtYWUwMS00MmMzLWEyYTgtM2E2YjIzMzdhNTA1',
-  '黑墨沉香':'MGVhMGRlNTUtYzcyNi00Y2YwLTliZTYtYzNiY2Q3YThjZGU1',
-  '白桃乌龙':'ZTExZTU4OGEtNGZmYi00YmEzLWFlZjYtZDFjOWVhNGFkOTgz',
-  '黑葫乐':'ZDU2M2I4MDQtMjM3Mi00MDcyLThiZGItY2NkNDc5ZmYwMTU3',
-  '黑一然':'NDU0NDVmNjctZGQzNC00Zjg4LTkzZDktYWQ0OGQ4NmZiMGUw',
-  '白诗文':'ZGY0NjExOGQtYmE4OC00ODEwLTk0ODktYTFjNDc2MTY1ZGY5',
-  '白一千':'ZjM5Y2UyY2QtNWNmZi00ZDg5LTgxNGYtZjU2ZTVjNjM4NTUz',
-  '白筱俪':'MjQ3MjIzMzYtZjkxNC00NjY0LWI5MmItNzBjYTkxM2VhMjgz',
-  '黑白明辉':'Y2YxZGUzOWMtMDczMC00YzMzLWEwMjAtYzRhMjY0NDY3MmU3',
-  '黑轮':'MmQ1MTg2MGMtOWY3MS00MGJkLTg1Y2YtMTlmYzFlMTQxZDI2',
-  '白艾米':'ZTcyNmVmMWQtMzNiZC00ZjljLWIzNzctNjU2NDllZjFlYWU1'
-};
+const _m={'HR1':'ZGQ5YmJmZWYtYWUwMS00MmMzLWEyYTgtM2E2YjIzMzdhNTA1','HR2':'MGVhMGRlNTUtYzcyNi00Y2YwLTliZTYtYzNiY2Q3YThjZGU1','HR3':'ZTExZTU4OGEtNGZmYi00YmEzLWFlZjYtZDFjOWVhNGFkOTgz','HR4':'ZDU2M2I4MDQtMjM3Mi00MDcyLThiZGItY2NkNDc5ZmYwMTU3','HR5':'NDU0NDVmNjctZGQzNC00Zjg4LTkzZDktYWQ0OGQ4NmZiMGUw','HR6':'ZGY0NjExOGQtYmE4OC00ODEwLTk0ODktYTFjNDc2MTY1ZGY5','HR7':'ZjM5Y2UyY2QtNWNmZi00ZDg5LTgxNGYtZjU2ZTVjNjM4NTUz','HR8':'MjQ3MjIzMzYtZjkxNC00NjY0LWI5MmItNzBjYTkxM2VhMjgz','HR9':'Y2YxZGUzOWMtMDczMC00YzMzLWEwMjAtYzRhMjY0NDY3MmU3','HR10':'MmQ1MTg2MGMtOWY3MS00MGJkLTg1Y2YtMTlmYzFlMTQxZDI2','HR11':'ZTcyNmVmMWQtMzNiZC00ZjljLWIzNzctNjU2NDllZjFlYWU1'};
 function _g(n){return atob(_k)+atob(_m[n])}
 const urlParams=new URLSearchParams(window.location.search);
 const rawHr=urlParams.get('hr')||'';
