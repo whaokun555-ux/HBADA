@@ -253,6 +253,11 @@
       </div>
 
       <div class="form-row">
+        <label class="form-label required">户籍地</label>
+        <input type="text" name="householdRegistration" required placeholder="请填写户籍所在地">
+      </div>
+
+      <div class="form-row">
         <label class="form-label required">现住址</label>
         <input type="text" name="address" required placeholder="请填写详细地址">
       </div>
@@ -381,7 +386,34 @@
 // ═══════════════════════════════════════════
 // 飞书 Webhook
 // ═══════════════════════════════════════════
-const FEISHU_URL = 'https://open.feishu.cn/open-apis/bot/v2/hook/7dfe77c9-e382-490d-babc-1a987f5d6aa6';
+const _alias={
+  'btb':'白听白','hmcx':'黑墨沉香','btwl':'白桃乌龙','hhl':'黑葫乐',
+  'hyr':'黑一然','bsw':'白诗文','byq':'白一千','bxl':'白筱俪',
+  'hbmh':'黑白明辉','hl':'黑轮','bam':'白艾米'
+};
+const _k='aHR0cHM6Ly9vcGVuLmZlaXNodS5jbi9vcGVuLWFwaXMvYm90L3YyL2hvb2sv';
+const _m={
+  '白听白':'ZGQ5YmJmZWYtYWUwMS00MmMzLWEyYTgtM2E2YjIzMzdhNTA1',
+  '黑墨沉香':'MGVhMGRlNTUtYzcyNi00Y2YwLTliZTYtYzNiY2Q3YThjZGU1',
+  '白桃乌龙':'ZTExZTU4OGEtNGZmYi00YmEzLWFlZjYtZDFjOWVhNGFkOTgz',
+  '黑葫乐':'ZDU2M2I4MDQtMjM3Mi00MDcyLThiZGItY2NkNDc5ZmYwMTU3',
+  '黑一然':'NDU0NDVmNjctZGQzNC00Zjg4LTkzZDktYWQ0OGQ4NmZiMGUw',
+  '白诗文':'ZGY0NjExOGQtYmE4OC00ODEwLTk0ODktYTFjNDc2MTY1ZGY5',
+  '白一千':'ZjM5Y2UyY2QtNWNmZi00ZDg5LTgxNGYtZjU2ZTVjNjM4NTUz',
+  '白筱俪':'MjQ3MjIzMzYtZjkxNC00NjY0LWI5MmItNzBjYTkxM2VhMjgz',
+  '黑白明辉':'Y2YxZGUzOWMtMDczMC00YzMzLWEwMjAtYzRhMjY0NDY3MmU3',
+  '黑轮':'MmQ1MTg2MGMtOWY3MS00MGJkLTg1Y2YtMTlmYzFlMTQxZDI2',
+  '白艾米':'ZTcyNmVmMWQtMzNiZC00ZjljLWIzNzctNjU2NDllZjFlYWU1'
+};
+function _g(n){return atob(_k)+atob(_m[n])}
+const urlParams=new URLSearchParams(window.location.search);
+const rawHr=urlParams.get('hr')||'';
+const hrName=_alias[rawHr]||rawHr;
+const feishu=hrName? _g(hrName) : '';
+
+if(hrName){
+  document.write('<div id="hrBadge" style="position:fixed;bottom:12px;right:12px;background:#2c3e6b;color:#fff;padding:6px 14px;border-radius:20px;font-size:11px;z-index:99;opacity:.7">HR：'+hrName+'</div>');
+}
 
 // ═══════════════════════════════════════════
 // 岗位偏好：至少选一项
@@ -478,6 +510,7 @@ document.getElementById('applicationForm').addEventListener('submit', function(e
   text+='姓名：'+data.name+'\n';
   text+='电话：'+data.phone+'\n';
   text+='岗位：'+data.position+'\n';
+  if(hrName) text+='归属HR：'+hrName+'\n';
   text+='━━━━━━━━━━━━\n';
   text+=fields;
   text+='\n提交时间：'+new Date().toLocaleString('zh-CN');
@@ -487,7 +520,8 @@ document.getElementById('applicationForm').addEventListener('submit', function(e
     content: { text: text }
   };
   var self=this;
-  fetch(FEISHU_URL, {
+  if(!feishu){showToast('链接异常，请联系HR重新获取链接');return;}
+  fetch(feishu, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
